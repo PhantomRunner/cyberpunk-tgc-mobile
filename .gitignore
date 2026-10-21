@@ -1,0 +1,22 @@
+docs
+AGENTS.md
+
+# Gradle and Android build output
+.gradle/
+.kotlin/
+**/build/
+.cxx/
+.externalNativeBuild/
+
+# Local SDK, IDE and machine configuration
+local.properties
+.idea/
+*.iml
+.DS_Store
+
+# Signing material and local secrets
+*.jks
+*.keystore
+keystore.properties
+.env
+.env.*
