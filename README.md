@@ -88,8 +88,11 @@ versions aligned; Activity Compose hosts the Compose screen. Java and Kotlin
 bytecode target Java 17. Compile/target SDK is 36; minimum SDK is 24.
 
 The manifest declares only the launcher activity, with no permissions. There
-are no external images or proprietary card assets. The screen uses the default
-Material 3 styling; the custom application theme belongs to M1-02.
+are no external images or proprietary card assets. The Material 3 application
+theme follows the device's light/dark setting, using charcoal surfaces and cyan
+accents in dark mode and pale surfaces with deeper teal accents in light mode.
+It uses built-in fonts: monospace titles and readable sans-serif body text.
+Change the emulator's system dark theme setting to check both palettes.
 
 Build output, SDK paths, IDE files and signing secrets are ignored by Git.
 Keep machine-specific configuration out of committed files.
