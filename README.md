@@ -5,34 +5,78 @@ collection and saved decks. The current scaffold displays a single Compose
 screen. Collection, decks, navigation, photography, OCR and sensors are planned
 in later tasks.
 
-## Build and run
+## Jumpstart: run with Android Studio
 
-Requirements:
+1. Install Android Studio and a JDK 17 distribution, then open this repository's
+   root folder (the one containing `settings.gradle.kts`).
+2. In Android Studio's **SDK Manager**, install **Android SDK Platform 36**.
+   Under **SDK Tools**, enable **Show Package Details**, select **Android SDK
+   Build-Tools 35.0.0**, and install **Android SDK Platform-Tools**. For an
+   emulator, also install **Android Emulator** and a system image.
+3. In the IDE settings, find **Gradle JDK** and select your JDK 17 installation.
+   Let Gradle sync finish. The included wrapper downloads Gradle and the project
+   dependencies, so the first sync needs internet access. The app runs offline.
+4. Choose a target running **Android 7.0 (API 24) or newer**:
+   - **Emulator:** in **Device Manager**, create a virtual phone using the
+     installed system image, then start it.
+   - **Physical phone:** enable Developer options and USB debugging, connect
+     the phone by USB, and accept its debugging authorization prompt.
+5. Select the **app** run configuration and your device, then click **Run**.
+   The app should open to a screen displaying **Cyberpunk TCG Companion**.
 
-- JDK 17 (set `JAVA_HOME` to its installation directory).
-- Android SDK Platform 36 and SDK Build Tools 35.0.0, installed through Android
-  Studio's SDK Manager or Android command-line tools.
-- Network access for the first Gradle/dependency download. The app itself does
-  not need network access.
+## Build and run from a terminal
 
-Open this repository's root directory in Android Studio, choose JDK 17 as the
-Gradle JDK, and let Gradle sync finish. Set the SDK location in Android Studio,
-or set `ANDROID_HOME` to the SDK directory. Alternatively, create an untracked
-`local.properties` containing `sdk.dir=/absolute/path/to/your/android-sdk`.
-
-From the repository root:
+Install the same JDK and SDK packages listed above. On Linux or macOS, replace
+the example paths below with your actual installations. The SDK location is
+shown in Android Studio's SDK Manager.
 
 ```sh
+cd /path/to/cyberpunk-tgc
+export JAVA_HOME="/path/to/jdk-17"
+export ANDROID_HOME="/path/to/android-sdk"
+export PATH="$JAVA_HOME/bin:$ANDROID_HOME/platform-tools:$PATH"
+
+java -version
 ./gradlew assembleDebug
 ```
 
-On Windows, use `gradlew.bat assembleDebug`. The wrapper downloads the pinned
-Gradle version; a separate Gradle installation is unnecessary.
+`java -version` should report Java 17. A successful build ends with
+`BUILD SUCCESSFUL` and writes the APK to
+`app/build/outputs/apk/debug/app-debug.apk`. Building an APK does not require
+a connected device or running emulator. A separate Gradle installation is
+unnecessary.
 
-The debug APK is written to `app/build/outputs/apk/debug/app-debug.apk`.
-Run the `app` configuration in Android Studio on an emulator or device with
-Android 7.0 (API 24) or newer. With a connected device, `./gradlew installDebug`
-installs the APK; open **Cyberpunk TCG Companion** from the launcher.
+To install and launch it, start an emulator or connect an authorized phone as
+described above. With exactly one device connected:
+
+```sh
+adb devices
+./gradlew installDebug
+adb shell am start -n com.example.cyberpunktcg/.MainActivity
+```
+
+In `adb devices`, the target should have status `device`. You can also open
+**Cyberpunk TCG Companion** from the device's app launcher after installation.
+
+On Windows, set `JAVA_HOME` and `ANDROID_HOME` in your environment settings and
+add their `bin` and `platform-tools` directories respectively to `Path`. Open a
+new terminal in the repository root; in PowerShell, use
+`.\gradlew.bat assembleDebug` and `.\gradlew.bat installDebug`. The `adb`
+commands are the same.
+
+## Common setup fixes
+
+- **Java missing or wrong version:** check `JAVA_HOME` and `java -version`.
+  Android Studio's Gradle JDK is configured separately from the terminal.
+- **SDK location not found or wrong SDK selected:** set `ANDROID_HOME`, or
+  create an untracked `local.properties` in the repository root with
+  `sdk.dir=/absolute/path/to/your/android-sdk`. An existing `sdk.dir` takes
+  precedence over `ANDROID_HOME`; update it if it points to a different SDK.
+- **Missing SDK packages or licenses:** use SDK Manager to install Platform 36
+  and Build-Tools 35.0.0 and accept the displayed license agreements.
+- **No device or `unauthorized`:** start the emulator, or unlock the USB-connected
+  phone and accept its debugging prompt. Check again with `adb devices`.
+- **`Permission denied` for `gradlew` on Linux/macOS:** run `chmod +x gradlew`.
 
 ## Project setup
 
