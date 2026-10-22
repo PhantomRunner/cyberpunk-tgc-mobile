@@ -37,4 +37,5 @@ dependencies {
     implementation(platform("androidx.compose:compose-bom:2025.08.00"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.material3:material3")
+    implementation("androidx.navigation:navigation-compose:2.9.8")
 }
