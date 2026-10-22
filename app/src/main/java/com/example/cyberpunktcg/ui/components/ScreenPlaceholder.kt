@@ -2,7 +2,6 @@ package com.example.cyberpunktcg.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -17,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.example.cyberpunktcg.R
 
 @Composable
-internal fun ScreenPlaceholder(content: @Composable ColumnScope.() -> Unit = {}) {
+internal fun ScreenPlaceholder(content: @Composable () -> Unit = {}) {
     Column(
         modifier = Modifier
             .fillMaxSize()

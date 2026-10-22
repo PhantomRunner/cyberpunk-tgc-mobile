@@ -4,6 +4,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
 
+// Each "on..." color is for text or icons drawn on the matching background color.
 internal val DarkColors = darkColorScheme(
     primary = Color(0xFF73D7E5),
     onPrimary = Color(0xFF00363E),
