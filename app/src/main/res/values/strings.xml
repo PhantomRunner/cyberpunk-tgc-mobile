@@ -3,6 +3,9 @@
     <string name="app_name">Cyberpunk TCG Companion</string>
     <string name="home">Home</string>
     <string name="collection">Collection</string>
+    <string name="demo_collection">Demo collection</string>
+    <string name="demo_collection_description">Fictional cards for the UI prototype.</string>
+    <string name="art_placeholder">Art placeholder</string>
     <string name="my_decks">My Decks</string>
     <string name="scanner">Scanner</string>
     <string name="settings">Settings</string>

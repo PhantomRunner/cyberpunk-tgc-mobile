@@ -6,7 +6,6 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun CyberpunkTcgTheme(
-    // Follow the device theme by default; pass true/false when checking a palette.
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit,
 ) {

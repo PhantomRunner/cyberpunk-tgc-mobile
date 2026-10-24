@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.cyberpunktcg.data.sample.DemoCards
 import com.example.cyberpunktcg.ui.card.CardDetailsScreen
 import com.example.cyberpunktcg.ui.collection.CollectionScreen
 import com.example.cyberpunktcg.ui.decks.DeckEditorScreen
@@ -24,6 +25,7 @@ internal fun AppNavHost(navController: NavHostController, modifier: Modifier = M
         composable(AppDestination.Home.route) { HomeScreen() }
         composable(AppDestination.Collection.route) {
             CollectionScreen(
+                cards = DemoCards.cards,
                 onOpenCard = { navController.navigate(AppDestination.CardDetails.route) },
             )
         }

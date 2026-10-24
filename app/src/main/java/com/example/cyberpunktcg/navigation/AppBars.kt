@@ -67,7 +67,7 @@ internal fun AppBottomBar(
                 selected = selectedTab == tab.destination,
                 onClick = { onTabSelected(tab.destination) },
                 icon = {
-                    // The visible label already gives this icon an accessible name.
+
                     Icon(painterResource(tab.iconResId), contentDescription = null)
                 },
                 label = { Text(stringResource(tab.destination.titleResId)) },

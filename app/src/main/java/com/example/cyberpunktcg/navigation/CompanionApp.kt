@@ -14,7 +14,7 @@ import androidx.navigation.compose.rememberNavController
 
 @Composable
 fun CompanionApp() {
-    // One controller owns the back stack; screens only receive navigation callbacks.
+
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
@@ -53,11 +53,9 @@ fun CompanionApp() {
 
 private fun navigateToMainTab(navController: NavHostController, destination: AppDestination) {
     navController.navigate(destination.route) {
-        // Keep Home as the Back destination and save the tab we are leaving.
         popUpTo(navController.graph.findStartDestination().id) {
             saveState = true
         }
-        // Avoid duplicate entries and reopen the last screen visited in this tab.
         launchSingleTop = true
         restoreState = true
     }

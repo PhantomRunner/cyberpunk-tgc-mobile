@@ -12,7 +12,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            CyberpunkTcgTheme (darkTheme = false){
+            CyberpunkTcgTheme (darkTheme = true){
                 CompanionApp()
             }
         }
