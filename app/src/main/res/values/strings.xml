@@ -6,6 +6,10 @@
     <string name="demo_collection">Demo collection</string>
     <string name="demo_collection_description">Fictional cards for the UI prototype.</string>
     <string name="art_placeholder">Art placeholder</string>
+    <string name="card_cost">Cost %1$d</string>
+    <string name="card_ram">RAM %1$d</string>
+    <string name="card_power">Power %1$d</string>
+    <string name="card_sell_indicator">Sell 1</string>
     <string name="my_decks">My Decks</string>
     <string name="scanner">Scanner</string>
     <string name="settings">Settings</string>
