@@ -16,7 +16,12 @@ import com.example.cyberpunktcg.ui.scanner.ScannerScreen
 import com.example.cyberpunktcg.ui.settings.SettingsScreen
 
 @Composable
-internal fun AppNavHost(navController: NavHostController, modifier: Modifier = Modifier) {
+internal fun AppNavHost(
+    navController: NavHostController,
+    isDarkTheme: Boolean,
+    onDarkThemeChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     NavHost(
         navController = navController,
         startDestination = AppDestination.Home.route,
@@ -42,6 +47,11 @@ internal fun AppNavHost(navController: NavHostController, modifier: Modifier = M
         }
         composable(AppDestination.DeckPreview.route) { DeckPreviewScreen() }
         composable(AppDestination.Scanner.route) { ScannerScreen() }
-        composable(AppDestination.Settings.route) { SettingsScreen() }
+        composable(AppDestination.Settings.route) {
+            SettingsScreen(
+                isDarkTheme = isDarkTheme,
+                onDarkThemeChange = onDarkThemeChange,
+            )
+        }
     }
 }

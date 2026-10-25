@@ -13,8 +13,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun CompanionApp() {
-
+fun CompanionApp(isDarkTheme: Boolean, onDarkThemeChange: (Boolean) -> Unit) {
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
@@ -43,6 +42,8 @@ fun CompanionApp() {
     ) { innerPadding ->
         AppNavHost(
             navController = navController,
+            isDarkTheme = isDarkTheme,
+            onDarkThemeChange = onDarkThemeChange,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)

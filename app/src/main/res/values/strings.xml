@@ -16,6 +16,9 @@
     <string name="my_decks">My Decks</string>
     <string name="scanner">Scanner</string>
     <string name="settings">Settings</string>
+    <string name="theme_title">Theme</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
     <string name="card_details">Card Details</string>
     <string name="deck_editor">Deck Editor</string>
     <string name="deck_preview">Deck Preview</string>
