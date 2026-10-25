@@ -1,6 +1,7 @@
 package com.example.cyberpunktcg.ui.collection
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,14 +13,18 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -35,14 +40,19 @@ import com.example.cyberpunktcg.ui.components.CardTile
 @Composable
 internal fun CollectionScreen(cards: List<Card>, onOpenCard: () -> Unit) {
     var query by rememberSaveable { mutableStateOf("") }
+
+    var selectedType by rememberSaveable { mutableStateOf<String?>(null) }
+    var isTypeMenuExpanded by remember { mutableStateOf(false) }
+    val cardTypes = cards.map { it.type }.distinct().sorted()
     val matchingCards = cards.filter { card ->
-        card.name.contains(query.trim(), ignoreCase = true)
+        card.name.contains(query.trim(), ignoreCase = true) &&
+            (selectedType == null || card.type == selectedType)
     }
     val listState = rememberLazyListState()
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    LaunchedEffect(query) {
+    LaunchedEffect(query, selectedType) {
         listState.scrollToItem(0)
     }
 
@@ -79,6 +89,39 @@ internal fun CollectionScreen(cards: List<Card>, onOpenCard: () -> Unit) {
                 focusManager.clearFocus()
             }),
         )
+        Box {
+            OutlinedButton(
+                onClick = {
+                    keyboardController?.hide()
+                    focusManager.clearFocus()
+                    isTypeMenuExpanded = true
+                },
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(
+                    stringResource(
+                        R.string.card_type_filter,
+                        selectedType ?: stringResource(R.string.all_card_types),
+                    ),
+                )
+            }
+            DropdownMenu(
+                expanded = isTypeMenuExpanded,
+                onDismissRequest = { isTypeMenuExpanded = false },
+            ) {
+                val options: List<String?> = listOf(null) + cardTypes
+                options.forEach { type ->
+                    DropdownMenuItem(
+                        text = { Text(type ?: stringResource(R.string.all_card_types)) },
+                        leadingIcon = { RadioButton(selected = selectedType == type, onClick = null) },
+                        onClick = {
+                            selectedType = type
+                            isTypeMenuExpanded = false
+                        },
+                    )
+                }
+            }
+        }
         LazyColumn(
             modifier = Modifier.weight(1f).fillMaxWidth(),
             state = listState,

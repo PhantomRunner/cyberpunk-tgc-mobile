@@ -37,7 +37,7 @@ object DemoCards {
             description = "test",
         ),
         Card(
-            id = "demo5", name = "Test 4", type = "Event",
+            id = "demo5", name = "Test 4", type = "1",
             cost = 2, power = 0, ram = 1,
             subtitle = "test",
             unitTypes = emptyList(),
