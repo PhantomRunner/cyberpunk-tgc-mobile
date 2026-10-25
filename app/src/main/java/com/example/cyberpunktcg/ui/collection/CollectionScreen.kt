@@ -7,9 +7,11 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
@@ -35,7 +37,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.example.cyberpunktcg.R
 import com.example.cyberpunktcg.data.model.Card
-import com.example.cyberpunktcg.ui.components.CardTile
+import com.example.cyberpunktcg.ui.components.CardPreviewTile
 
 @Composable
 internal fun CollectionScreen(cards: List<Card>, onOpenCard: () -> Unit) {
@@ -48,28 +50,18 @@ internal fun CollectionScreen(cards: List<Card>, onOpenCard: () -> Unit) {
         card.name.contains(query.trim(), ignoreCase = true) &&
             (selectedType == null || card.type == selectedType)
     }
-    val listState = rememberLazyListState()
+    val gridState = rememberLazyGridState()
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(query, selectedType) {
-        listState.scrollToItem(0)
+        gridState.scrollToItem(0)
     }
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
+        modifier = Modifier.fillMaxSize().padding(start = 16.dp, top = 16.dp, end = 16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Text(
-            text = stringResource(R.string.demo_collection),
-            modifier = Modifier.padding(top = 16.dp),
-            style = MaterialTheme.typography.titleLarge,
-        )
-        Text(
-            text = stringResource(R.string.demo_collection_description),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
         OutlinedTextField(
             value = query,
             onValueChange = { query = it },
@@ -122,22 +114,37 @@ internal fun CollectionScreen(cards: List<Card>, onOpenCard: () -> Unit) {
                 }
             }
         }
-        LazyColumn(
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
             modifier = Modifier.weight(1f).fillMaxWidth(),
-            state = listState,
+            state = gridState,
             contentPadding = PaddingValues(vertical = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(
+                        text = stringResource(R.string.demo_collection),
+                        style = MaterialTheme.typography.titleLarge,
+                    )
+                    Text(
+                        text = stringResource(R.string.demo_collection_description),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
             if (matchingCards.isEmpty()) {
-                item {
+                item(span = { GridItemSpan(maxLineSpan) }) {
                     Text(stringResource(R.string.no_cards_found))
                 }
             }
             items(items = matchingCards, key = { card -> card.id }) { card ->
-                CardTile(card = card, modifier = Modifier.fillMaxWidth())
+                CardPreviewTile(card = card, modifier = Modifier.fillMaxWidth())
             }
-            item {
-                OutlinedButton(onClick = onOpenCard) {
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                OutlinedButton(onClick = onOpenCard, modifier = Modifier.fillMaxWidth()) {
                     Text(stringResource(R.string.open_card_details))
                 }
             }
