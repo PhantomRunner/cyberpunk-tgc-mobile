@@ -5,6 +5,9 @@
     <string name="collection">Collection</string>
     <string name="demo_collection">Demo collection</string>
     <string name="demo_collection_description">Fictional cards for the UI prototype.</string>
+    <string name="search_by_name">Search by name</string>
+    <string name="clear_search">Clear</string>
+    <string name="no_cards_found">No cards found</string>
     <string name="art_placeholder">Art placeholder</string>
     <string name="card_cost">Cost %1$d</string>
     <string name="card_ram">RAM %1$d</string>
