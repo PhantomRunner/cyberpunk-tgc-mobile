@@ -14,6 +14,10 @@
     <string name="card_type_unit">Unit</string>
     <string name="card_type_program">Program</string>
     <string name="card_type_gear">Gear</string>
+    <string name="card_color_red">Red</string>
+    <string name="card_color_yellow">Yellow</string>
+    <string name="card_color_blue">Blue</string>
+    <string name="card_color_green">Green</string>
     <string name="art_placeholder">Art placeholder</string>
     <string name="card_cost">Cost %1$d</string>
     <string name="card_ram">RAM %1$d</string>

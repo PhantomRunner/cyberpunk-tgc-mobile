@@ -1,5 +1,6 @@
 package com.example.cyberpunktcg.ui.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,11 +27,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.cyberpunktcg.R
 import com.example.cyberpunktcg.data.model.Card
+import com.example.cyberpunktcg.ui.theme.frameColor
 
 @Composable
 internal fun CardPreviewTile(card: Card, modifier: Modifier = Modifier) {
     OutlinedCard(
         modifier = modifier,
+        border = BorderStroke(2.dp, card.color.frameColor),
         colors = CardDefaults.outlinedCardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
         ),
@@ -74,17 +77,27 @@ internal fun CardPreviewTile(card: Card, modifier: Modifier = Modifier) {
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
                     )
-                    Surface(
-                        modifier = Modifier.align(Alignment.End),
-                        color = MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                        shape = RoundedCornerShape(4.dp),
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
-                            text = stringResource(R.string.card_power, card.power),
-                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp),
+                            text = stringResource(card.color.labelResId),
+                            modifier = Modifier.weight(1f),
                             style = MaterialTheme.typography.labelMedium,
                         )
+                        Surface(
+                            color = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                            shape = RoundedCornerShape(4.dp),
+                        ) {
+                            Text(
+                                text = stringResource(R.string.card_power, card.power),
+                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp),
+                                style = MaterialTheme.typography.labelMedium,
+                            )
+                        }
                     }
                 }
             }
