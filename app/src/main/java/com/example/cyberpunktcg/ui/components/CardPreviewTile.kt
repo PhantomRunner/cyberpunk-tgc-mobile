@@ -30,8 +30,9 @@ import com.example.cyberpunktcg.data.model.Card
 import com.example.cyberpunktcg.ui.theme.frameColor
 
 @Composable
-internal fun CardPreviewTile(card: Card, modifier: Modifier = Modifier) {
+internal fun CardPreviewTile(card: Card, onClick: () -> Unit, modifier: Modifier = Modifier) {
     OutlinedCard(
+        onClick = onClick,
         modifier = modifier,
         border = BorderStroke(2.dp, card.color.frameColor),
         colors = CardDefaults.outlinedCardColors(

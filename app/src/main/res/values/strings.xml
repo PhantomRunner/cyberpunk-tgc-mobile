@@ -46,7 +46,7 @@
     <string name="deck_preview">Deck Preview</string>
     <string name="back">Back</string>
     <string name="screen_placeholder">Screen placeholder</string>
-    <string name="open_card_details">Open card details placeholder</string>
+    <string name="card_not_found">Card not found</string>
     <string name="open_deck_editor">Open deck editor placeholder</string>
     <string name="open_deck_preview">Open deck preview placeholder</string>
 </resources>

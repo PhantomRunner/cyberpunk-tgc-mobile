@@ -4,6 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.cyberpunktcg.data.sample.DemoCards
@@ -40,10 +42,21 @@ internal fun AppNavHost(
                 onColorsChange = collectionViewModel::setSelectedColors,
                 onSortFieldChange = collectionViewModel::setSortField,
                 onSortDirectionChange = collectionViewModel::setSortDirection,
-                onOpenCard = { navController.navigate(AppDestination.CardDetails.route) },
+                onOpenCard = { cardId ->
+                    navController.navigate(cardDetailsRoute(cardId)) {
+                        launchSingleTop = true
+                    }
+                },
             )
         }
-        composable(AppDestination.CardDetails.route) { CardDetailsScreen() }
+        composable(
+            route = AppDestination.CardDetails.route,
+            arguments = listOf(navArgument("cardId") { type = NavType.StringType }),
+        ) { entry ->
+            val cardId = entry.arguments?.getString("cardId")
+            val card = DemoCards.cards.firstOrNull { it.id == cardId }
+            CardDetailsScreen(card = card)
+        }
         composable(AppDestination.Decks.route) {
             MyDecksScreen(
                 onOpenDeck = { navController.navigate(AppDestination.DeckEditor.route) },

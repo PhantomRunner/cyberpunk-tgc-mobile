@@ -1,5 +1,6 @@
 package com.example.cyberpunktcg.navigation
 
+import android.net.Uri
 import androidx.annotation.StringRes
 import com.example.cyberpunktcg.R
 
@@ -10,7 +11,7 @@ internal enum class AppDestination(val route: String, @get:StringRes val titleRe
     Decks("decks", R.string.my_decks),
     Scanner("scanner", R.string.scanner),
     Settings("settings", R.string.settings),
-    CardDetails("card_details", R.string.card_details),
+    CardDetails("card_details/{cardId}", R.string.card_details),
     DeckEditor("deck_editor", R.string.deck_editor),
     DeckPreview("deck_preview", R.string.deck_preview);
 
@@ -21,4 +22,8 @@ internal enum class AppDestination(val route: String, @get:StringRes val titleRe
             DeckEditor, DeckPreview -> Decks
             else -> this
         }
+}
+
+internal fun cardDetailsRoute(cardId: String): String {
+    return "card_details/${Uri.encode(cardId)}"
 }

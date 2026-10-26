@@ -57,16 +57,19 @@ internal fun CollectionScreen(
     onColorsChange: (Set<CardColor>) -> Unit,
     onSortFieldChange: (CardSortField) -> Unit,
     onSortDirectionChange: (SortDirection) -> Unit,
-    onOpenCard: () -> Unit,
+    onOpenCard: (String) -> Unit,
 ) {
     val gridState = rememberLazyGridState()
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    LaunchedEffect(
-        state.query, state.selectedTypes, state.selectedColors, state.sortField, state.sortDirection,
-    ) {
-        gridState.scrollToItem(0)
+    var previousState by remember { mutableStateOf(state) }
+    LaunchedEffect(state) {
+        // Back restores the grid position; only a change of conditions resets it.
+        if (state != previousState) {
+            previousState = state
+            gridState.scrollToItem(0)
+        }
     }
 
     Column(
@@ -141,12 +144,11 @@ internal fun CollectionScreen(
                 }
             }
             items(items = cards, key = { card -> card.id }) { card ->
-                CardPreviewTile(card = card, modifier = Modifier.fillMaxWidth())
-            }
-            item(span = { GridItemSpan(maxLineSpan) }) {
-                OutlinedButton(onClick = onOpenCard, modifier = Modifier.fillMaxWidth()) {
-                    Text(stringResource(R.string.open_card_details))
-                }
+                CardPreviewTile(
+                    card = card,
+                    onClick = { onOpenCard(card.id) },
+                    modifier = Modifier.fillMaxWidth(),
+                )
             }
         }
     }
