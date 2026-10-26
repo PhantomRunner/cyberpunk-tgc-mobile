@@ -17,6 +17,10 @@ internal class CollectionViewModel(private val savedStateHandle: SavedStateHandl
                 ?.map { CardType.valueOf(it) }?.toSet() ?: emptySet(),
             selectedColors = savedStateHandle.get<ArrayList<String>>(COLORS)
                 ?.map { CardColor.valueOf(it) }?.toSet() ?: emptySet(),
+            sortField = savedStateHandle.get<String>(SORT_FIELD)
+                ?.let { CardSortField.valueOf(it) } ?: CardSortField.NAME,
+            sortDirection = savedStateHandle.get<String>(SORT_DIRECTION)
+                ?.let { SortDirection.valueOf(it) } ?: SortDirection.ASCENDING,
         ),
     )
         private set
@@ -37,11 +41,25 @@ internal class CollectionViewModel(private val savedStateHandle: SavedStateHandl
         uiState = uiState.copy(selectedColors = colors)
     }
 
-    fun matchingCards(cards: List<Card>): List<Card> = filterCards(cards, uiState)
+    fun setSortField(field: CardSortField) {
+        savedStateHandle[SORT_FIELD] = field.name
+        uiState = uiState.copy(sortField = field)
+    }
+
+    fun setSortDirection(direction: SortDirection) {
+        savedStateHandle[SORT_DIRECTION] = direction.name
+        uiState = uiState.copy(sortDirection = direction)
+    }
+
+    fun visibleCards(cards: List<Card>): List<Card> = sortCards(
+        filterCards(cards, uiState), uiState.sortField, uiState.sortDirection,
+    )
 
     private companion object {
         const val QUERY = "collection_query"
         const val TYPES = "collection_types"
         const val COLORS = "collection_colors"
+        const val SORT_FIELD = "collection_sort_field"
+        const val SORT_DIRECTION = "collection_sort_direction"
     }
 }

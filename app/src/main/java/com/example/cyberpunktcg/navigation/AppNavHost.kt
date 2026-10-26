@@ -33,11 +33,13 @@ internal fun AppNavHost(
         composable(AppDestination.Collection.route) {
             val collectionViewModel: CollectionViewModel = viewModel()
             CollectionScreen(
-                cards = collectionViewModel.matchingCards(DemoCards.cards),
+                cards = collectionViewModel.visibleCards(DemoCards.cards),
                 state = collectionViewModel.uiState,
                 onQueryChange = collectionViewModel::setQuery,
                 onTypesChange = collectionViewModel::setSelectedTypes,
                 onColorsChange = collectionViewModel::setSelectedColors,
+                onSortFieldChange = collectionViewModel::setSortField,
+                onSortDirectionChange = collectionViewModel::setSortDirection,
                 onOpenCard = { navController.navigate(AppDestination.CardDetails.route) },
             )
         }

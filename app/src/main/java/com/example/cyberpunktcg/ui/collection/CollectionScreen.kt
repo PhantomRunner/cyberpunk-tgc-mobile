@@ -30,6 +30,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
@@ -54,13 +55,17 @@ internal fun CollectionScreen(
     onQueryChange: (String) -> Unit,
     onTypesChange: (Set<CardType>) -> Unit,
     onColorsChange: (Set<CardColor>) -> Unit,
+    onSortFieldChange: (CardSortField) -> Unit,
+    onSortDirectionChange: (SortDirection) -> Unit,
     onOpenCard: () -> Unit,
 ) {
     val gridState = rememberLazyGridState()
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    LaunchedEffect(state.query, state.selectedTypes, state.selectedColors) {
+    LaunchedEffect(
+        state.query, state.selectedTypes, state.selectedColors, state.sortField, state.sortDirection,
+    ) {
         gridState.scrollToItem(0)
     }
 
@@ -87,7 +92,10 @@ internal fun CollectionScreen(
                 focusManager.clearFocus()
             }),
         )
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             TypeFilterMenu(
                 selectedTypes = state.selectedTypes,
                 onTypesChange = onTypesChange,
@@ -96,6 +104,13 @@ internal fun CollectionScreen(
             ColorFilterMenu(
                 selectedColors = state.selectedColors,
                 onColorsChange = onColorsChange,
+                modifier = Modifier.weight(1f),
+            )
+            CollectionSortMenu(
+                field = state.sortField,
+                direction = state.sortDirection,
+                onFieldChange = onSortFieldChange,
+                onDirectionChange = onSortDirectionChange,
                 modifier = Modifier.weight(1f),
             )
         }
@@ -155,6 +170,7 @@ private fun TypeFilterMenu(
                 expanded = true
             },
             modifier = Modifier.fillMaxWidth(),
+            contentPadding = PaddingValues(8.dp),
         ) {
             val summary = if (selectedTypes.isEmpty()) stringResource(R.string.all_filter_options)
                 else selectedTypes.size.toString()
@@ -201,6 +217,7 @@ private fun ColorFilterMenu(
                 expanded = true
             },
             modifier = Modifier.fillMaxWidth(),
+            contentPadding = PaddingValues(8.dp),
         ) {
             val summary = if (selectedColors.isEmpty()) stringResource(R.string.all_filter_options)
                 else selectedColors.size.toString()

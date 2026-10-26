@@ -13,6 +13,15 @@
     <string name="all_filter_options">All</string>
     <string name="all_card_types">All types</string>
     <string name="all_card_colors">All colors</string>
+    <string name="collection_sort">Sort: %1$s %2$s</string>
+    <string name="sort_name">Name</string>
+    <string name="sort_cost">Cost</string>
+    <string name="sort_power">Power</string>
+    <string name="sort_ram">RAM</string>
+    <string name="sort_color">Color</string>
+    <string name="sort_type">Type</string>
+    <string name="sort_ascending">Ascending</string>
+    <string name="sort_descending">Descending</string>
     <string name="card_type_legend">Legend</string>
     <string name="card_type_unit">Unit</string>
     <string name="card_type_program">Program</string>

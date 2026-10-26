@@ -7,4 +7,6 @@ internal data class CollectionUiState(
     val query: String = "",
     val selectedTypes: Set<CardType> = emptySet(),
     val selectedColors: Set<CardColor> = emptySet(),
+    val sortField: CardSortField = CardSortField.NAME,
+    val sortDirection: SortDirection = SortDirection.ASCENDING,
 )
