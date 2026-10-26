@@ -37,6 +37,7 @@ dependencies {
     implementation(platform("androidx.compose:compose-bom:2025.08.00"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.material3:material3")
-    // Navigation 2.9.8 is compatible with this project's SDK 36 and AGP 8.13.
+
     implementation("androidx.navigation:navigation-compose:2.9.8")
+    testImplementation("junit:junit:4.13.2")
 }
