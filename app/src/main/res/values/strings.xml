@@ -10,6 +10,10 @@
     <string name="no_cards_found">No cards found</string>
     <string name="card_type_filter">Type: %1$s</string>
     <string name="all_card_types">All types</string>
+    <string name="card_type_legend">Legend</string>
+    <string name="card_type_unit">Unit</string>
+    <string name="card_type_program">Program</string>
+    <string name="card_type_gear">Gear</string>
     <string name="art_placeholder">Art placeholder</string>
     <string name="card_cost">Cost %1$d</string>
     <string name="card_ram">RAM %1$d</string>

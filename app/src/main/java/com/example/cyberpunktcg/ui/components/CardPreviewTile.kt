@@ -109,7 +109,11 @@ private fun PreviewHeader(card: Card) {
             horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            Text(card.type, style = MaterialTheme.typography.labelMedium, textAlign = TextAlign.End)
+            Text(
+                text = stringResource(card.type.labelResId),
+                style = MaterialTheme.typography.labelMedium,
+                textAlign = TextAlign.End,
+            )
             Text(
                 text = stringResource(R.string.card_ram, card.ram),
                 style = MaterialTheme.typography.labelSmall,

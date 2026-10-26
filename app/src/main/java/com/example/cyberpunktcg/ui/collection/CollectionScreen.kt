@@ -37,15 +37,16 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.example.cyberpunktcg.R
 import com.example.cyberpunktcg.data.model.Card
+import com.example.cyberpunktcg.data.model.CardType
 import com.example.cyberpunktcg.ui.components.CardPreviewTile
+import com.example.cyberpunktcg.ui.components.labelResId
 
 @Composable
 internal fun CollectionScreen(cards: List<Card>, onOpenCard: () -> Unit) {
     var query by rememberSaveable { mutableStateOf("") }
 
-    var selectedType by rememberSaveable { mutableStateOf<String?>(null) }
+    var selectedType by rememberSaveable { mutableStateOf<CardType?>(null) }
     var isTypeMenuExpanded by remember { mutableStateOf(false) }
-    val cardTypes = cards.map { it.type }.distinct().sorted()
     val matchingCards = cards.filter { card ->
         card.name.contains(query.trim(), ignoreCase = true) &&
             (selectedType == null || card.type == selectedType)
@@ -93,7 +94,8 @@ internal fun CollectionScreen(cards: List<Card>, onOpenCard: () -> Unit) {
                 Text(
                     stringResource(
                         R.string.card_type_filter,
-                        selectedType ?: stringResource(R.string.all_card_types),
+                        selectedType?.let { stringResource(it.labelResId) }
+                            ?: stringResource(R.string.all_card_types),
                     ),
                 )
             }
@@ -101,10 +103,15 @@ internal fun CollectionScreen(cards: List<Card>, onOpenCard: () -> Unit) {
                 expanded = isTypeMenuExpanded,
                 onDismissRequest = { isTypeMenuExpanded = false },
             ) {
-                val options: List<String?> = listOf(null) + cardTypes
+                val options: List<CardType?> = listOf(null) + CardType.entries
                 options.forEach { type ->
                     DropdownMenuItem(
-                        text = { Text(type ?: stringResource(R.string.all_card_types)) },
+                        text = {
+                            Text(
+                                type?.let { stringResource(it.labelResId) }
+                                    ?: stringResource(R.string.all_card_types),
+                            )
+                        },
                         leadingIcon = { RadioButton(selected = selectedType == type, onClick = null) },
                         onClick = {
                             selectedType = type

@@ -111,7 +111,7 @@ private fun CardHeader(card: Card) {
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Text(
-                text = card.type,
+                text = stringResource(card.type.labelResId),
                 style = MaterialTheme.typography.titleMedium,
                 textAlign = TextAlign.End,
             )
