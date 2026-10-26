@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -19,7 +20,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -27,35 +28,39 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.toggleableState
+import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.example.cyberpunktcg.R
 import com.example.cyberpunktcg.data.model.Card
+import com.example.cyberpunktcg.data.model.CardColor
 import com.example.cyberpunktcg.data.model.CardType
 import com.example.cyberpunktcg.ui.components.CardPreviewTile
 import com.example.cyberpunktcg.ui.components.labelResId
 
 @Composable
-internal fun CollectionScreen(cards: List<Card>, onOpenCard: () -> Unit) {
-    var query by rememberSaveable { mutableStateOf("") }
-
-    var selectedType by rememberSaveable { mutableStateOf<CardType?>(null) }
-    var isTypeMenuExpanded by remember { mutableStateOf(false) }
-    val matchingCards = cards.filter { card ->
-        card.name.contains(query.trim(), ignoreCase = true) &&
-            (selectedType == null || card.type == selectedType)
-    }
+internal fun CollectionScreen(
+    cards: List<Card>,
+    state: CollectionUiState,
+    onQueryChange: (String) -> Unit,
+    onTypesChange: (Set<CardType>) -> Unit,
+    onColorsChange: (Set<CardColor>) -> Unit,
+    onOpenCard: () -> Unit,
+) {
     val gridState = rememberLazyGridState()
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    LaunchedEffect(query, selectedType) {
+    LaunchedEffect(state.query, state.selectedTypes, state.selectedColors) {
         gridState.scrollToItem(0)
     }
 
@@ -64,13 +69,13 @@ internal fun CollectionScreen(cards: List<Card>, onOpenCard: () -> Unit) {
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         OutlinedTextField(
-            value = query,
-            onValueChange = { query = it },
+            value = state.query,
+            onValueChange = onQueryChange,
             modifier = Modifier.fillMaxWidth(),
             label = { Text(stringResource(R.string.search_by_name)) },
             trailingIcon = {
-                if (query.isNotEmpty()) {
-                    TextButton(onClick = { query = "" }) {
+                if (state.query.isNotEmpty()) {
+                    TextButton(onClick = { onQueryChange("") }) {
                         Text(stringResource(R.string.clear_search))
                     }
                 }
@@ -82,44 +87,17 @@ internal fun CollectionScreen(cards: List<Card>, onOpenCard: () -> Unit) {
                 focusManager.clearFocus()
             }),
         )
-        Box {
-            OutlinedButton(
-                onClick = {
-                    keyboardController?.hide()
-                    focusManager.clearFocus()
-                    isTypeMenuExpanded = true
-                },
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text(
-                    stringResource(
-                        R.string.card_type_filter,
-                        selectedType?.let { stringResource(it.labelResId) }
-                            ?: stringResource(R.string.all_card_types),
-                    ),
-                )
-            }
-            DropdownMenu(
-                expanded = isTypeMenuExpanded,
-                onDismissRequest = { isTypeMenuExpanded = false },
-            ) {
-                val options: List<CardType?> = listOf(null) + CardType.entries
-                options.forEach { type ->
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                type?.let { stringResource(it.labelResId) }
-                                    ?: stringResource(R.string.all_card_types),
-                            )
-                        },
-                        leadingIcon = { RadioButton(selected = selectedType == type, onClick = null) },
-                        onClick = {
-                            selectedType = type
-                            isTypeMenuExpanded = false
-                        },
-                    )
-                }
-            }
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            TypeFilterMenu(
+                selectedTypes = state.selectedTypes,
+                onTypesChange = onTypesChange,
+                modifier = Modifier.weight(1f),
+            )
+            ColorFilterMenu(
+                selectedColors = state.selectedColors,
+                onColorsChange = onColorsChange,
+                modifier = Modifier.weight(1f),
+            )
         }
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
@@ -142,18 +120,110 @@ internal fun CollectionScreen(cards: List<Card>, onOpenCard: () -> Unit) {
                     )
                 }
             }
-            if (matchingCards.isEmpty()) {
+            if (cards.isEmpty()) {
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     Text(stringResource(R.string.no_cards_found))
                 }
             }
-            items(items = matchingCards, key = { card -> card.id }) { card ->
+            items(items = cards, key = { card -> card.id }) { card ->
                 CardPreviewTile(card = card, modifier = Modifier.fillMaxWidth())
             }
             item(span = { GridItemSpan(maxLineSpan) }) {
                 OutlinedButton(onClick = onOpenCard, modifier = Modifier.fillMaxWidth()) {
                     Text(stringResource(R.string.open_card_details))
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun TypeFilterMenu(
+    selectedTypes: Set<CardType>,
+    onTypesChange: (Set<CardType>) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var expanded by remember { mutableStateOf(false) }
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    Box(modifier) {
+        OutlinedButton(
+            onClick = {
+                keyboardController?.hide()
+                focusManager.clearFocus()
+                expanded = true
+            },
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            val summary = if (selectedTypes.isEmpty()) stringResource(R.string.all_filter_options)
+                else selectedTypes.size.toString()
+            Text(stringResource(R.string.card_types_filter, summary))
+        }
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.all_card_types)) },
+                onClick = { onTypesChange(emptySet()) },
+            )
+            CardType.entries.forEach { type ->
+                val selected = type in selectedTypes
+                DropdownMenuItem(
+                    text = { Text(stringResource(type.labelResId)) },
+                    modifier = Modifier.semantics {
+                        role = Role.Checkbox
+                        toggleableState = if (selected) ToggleableState.On else ToggleableState.Off
+                    },
+                    leadingIcon = { Checkbox(checked = selected, onCheckedChange = null) },
+                    onClick = {
+                        onTypesChange(if (selected) selectedTypes - type else selectedTypes + type)
+                    },
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ColorFilterMenu(
+    selectedColors: Set<CardColor>,
+    onColorsChange: (Set<CardColor>) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var expanded by remember { mutableStateOf(false) }
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    Box(modifier) {
+        OutlinedButton(
+            onClick = {
+                keyboardController?.hide()
+                focusManager.clearFocus()
+                expanded = true
+            },
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            val summary = if (selectedColors.isEmpty()) stringResource(R.string.all_filter_options)
+                else selectedColors.size.toString()
+            Text(stringResource(R.string.card_colors_filter, summary))
+        }
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.all_card_colors)) },
+                onClick = { onColorsChange(emptySet()) },
+            )
+            CardColor.entries.forEach { color ->
+                val selected = color in selectedColors
+                DropdownMenuItem(
+                    text = { Text(stringResource(color.labelResId)) },
+                    modifier = Modifier.semantics {
+                        role = Role.Checkbox
+                        toggleableState = if (selected) ToggleableState.On else ToggleableState.Off
+                    },
+                    leadingIcon = { Checkbox(checked = selected, onCheckedChange = null) },
+                    onClick = {
+                        onColorsChange(if (selected) selectedColors - color else selectedColors + color)
+                    },
+                )
             }
         }
     }

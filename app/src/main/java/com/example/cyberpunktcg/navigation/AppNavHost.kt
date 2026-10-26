@@ -2,12 +2,14 @@ package com.example.cyberpunktcg.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.cyberpunktcg.data.sample.DemoCards
 import com.example.cyberpunktcg.ui.card.CardDetailsScreen
 import com.example.cyberpunktcg.ui.collection.CollectionScreen
+import com.example.cyberpunktcg.ui.collection.CollectionViewModel
 import com.example.cyberpunktcg.ui.decks.DeckEditorScreen
 import com.example.cyberpunktcg.ui.decks.DeckPreviewScreen
 import com.example.cyberpunktcg.ui.decks.MyDecksScreen
@@ -29,8 +31,13 @@ internal fun AppNavHost(
     ) {
         composable(AppDestination.Home.route) { HomeScreen() }
         composable(AppDestination.Collection.route) {
+            val collectionViewModel: CollectionViewModel = viewModel()
             CollectionScreen(
-                cards = DemoCards.cards,
+                cards = collectionViewModel.matchingCards(DemoCards.cards),
+                state = collectionViewModel.uiState,
+                onQueryChange = collectionViewModel::setQuery,
+                onTypesChange = collectionViewModel::setSelectedTypes,
+                onColorsChange = collectionViewModel::setSelectedColors,
                 onOpenCard = { navController.navigate(AppDestination.CardDetails.route) },
             )
         }

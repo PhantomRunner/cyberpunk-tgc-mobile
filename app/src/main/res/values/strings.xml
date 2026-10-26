@@ -8,8 +8,11 @@
     <string name="search_by_name">Search by name</string>
     <string name="clear_search">Clear</string>
     <string name="no_cards_found">No cards found</string>
-    <string name="card_type_filter">Type: %1$s</string>
+    <string name="card_types_filter">Types: %1$s</string>
+    <string name="card_colors_filter">Colors: %1$s</string>
+    <string name="all_filter_options">All</string>
     <string name="all_card_types">All types</string>
+    <string name="all_card_colors">All colors</string>
     <string name="card_type_legend">Legend</string>
     <string name="card_type_unit">Unit</string>
     <string name="card_type_program">Program</string>
