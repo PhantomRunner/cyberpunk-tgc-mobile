@@ -57,7 +57,20 @@
     <string name="deck_main_count">Main: %1$d</string>
     <string name="deck_legend_count">Legends: %1$d/3</string>
     <string name="empty_deck">Empty draft</string>
-    <string name="deck_editing_unavailable">Card editing is not available in this demo yet.</string>
+    <string name="main_editing_unavailable">No main cards yet. Main-deck editing is not available in this demo yet.</string>
+    <string name="deck_name_required">Enter a deck name.</string>
+    <string name="save_draft">Save draft</string>
+    <string name="draft_saved">Draft saved for this session.</string>
+    <string name="unsaved_changes">Unsaved changes</string>
+    <string name="legend_slot">Legend slot %1$d</string>
+    <string name="choose_legend">Choose Legend</string>
+    <string name="select_legend">Select Legend</string>
+    <string name="remove_legend">Remove Legend</string>
+    <string name="legend_selection_hint">Choose up to three Legends with different names. This demo has only Test 0.</string>
+    <string name="discard_changes_title">Discard changes?</string>
+    <string name="discard_changes_message">Unsaved name and Legend changes will be lost.</string>
+    <string name="discard_changes">Discard changes</string>
+    <string name="keep_editing">Keep editing</string>
     <string name="deck_not_found">Deck not found</string>
     <string name="back_to_my_decks">Back to My Decks</string>
 </resources>

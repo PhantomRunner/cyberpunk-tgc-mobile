@@ -26,6 +26,7 @@ internal fun AppNavHost(
     isDarkTheme: Boolean,
     onDarkThemeChange: (Boolean) -> Unit,
     decksViewModel: DecksViewModel,
+    onEditorBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     NavHost(
@@ -81,9 +82,18 @@ internal fun AppNavHost(
             route = AppDestination.DeckEditor.route,
             arguments = listOf(navArgument("deckId") { type = NavType.StringType }),
         ) { entry ->
-            val deck = decksViewModel.findDeck(entry.arguments?.getString("deckId"))
+            val deckId = entry.arguments?.getString("deckId")
+            val deck = decksViewModel.editingDeck(deckId)
             DeckEditorScreen(
                 deck = deck,
+                onBack = onEditorBack,
+                legends = decksViewModel.legends,
+                hasUnsavedChanges = decksViewModel.hasUnsavedChanges(deckId),
+                onNameChange = { name -> deckId?.let { decksViewModel.renameDeck(it, name) } },
+                canAddLegend = { cardId -> deckId != null && decksViewModel.canAddLegend(deckId, cardId) },
+                onAddLegend = { cardId -> deckId?.let { decksViewModel.addLegend(it, cardId) } },
+                onRemoveLegend = { cardId -> deckId?.let { decksViewModel.removeLegend(it, cardId) } },
+                onSaveDraft = { deckId?.let { decksViewModel.saveDraft(it) } },
                 onBackToDecks = {
                     if (!navController.popBackStack(AppDestination.Decks.route, false)) {
                         navController.navigate(AppDestination.Decks.route) {
