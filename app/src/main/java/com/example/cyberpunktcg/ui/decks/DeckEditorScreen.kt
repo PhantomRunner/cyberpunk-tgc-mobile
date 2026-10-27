@@ -35,12 +35,14 @@ import androidx.compose.ui.unit.dp
 import com.example.cyberpunktcg.R
 import com.example.cyberpunktcg.data.model.Card
 import com.example.cyberpunktcg.data.model.Deck
+import com.example.cyberpunktcg.domain.DeckValidation
 import com.example.cyberpunktcg.ui.components.labelResId
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun DeckEditorScreen(
     deck: Deck?,
+    validation: DeckValidation?,
     onBack: () -> Unit,
     legends: List<Card>,
     mainCards: List<Card>,
@@ -85,6 +87,9 @@ internal fun DeckEditorScreen(
                 modifier = Modifier.fillMaxWidth(),
             ) { Text(stringResource(R.string.save_draft)) }
             Text(stringResource(if (hasUnsavedChanges) R.string.unsaved_changes else R.string.draft_saved))
+            if (validation != null) {
+                DeckValidationSummary(validation)
+            }
             Text(stringResource(R.string.deck_legend_count, deck.legendIds.size))
             repeat(3) { index ->
                 OutlinedCard(modifier = Modifier.fillMaxWidth()) {
@@ -127,6 +132,9 @@ internal fun DeckEditorScreen(
                             Text(card.subtitle)
                             Text(stringResource(card.type.labelResId))
                             Text(stringResource(R.string.deck_card_copies, item.quantity))
+                            validation?.ramWarnings?.firstOrNull { it.cardId == card.id }?.let { warning ->
+                                CardRamWarningText(warning)
+                            }
                         }
                     }
                 }
@@ -138,7 +146,7 @@ internal fun DeckEditorScreen(
             onDismissRequest = { showLegendPicker = false },
             sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
         ) {
-            // Android 7 cannot draw dark navigation icons on the light sheet.
+
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
                 val view = LocalView.current
                 SideEffect {

@@ -78,4 +78,17 @@
     <string name="keep_editing">Keep editing</string>
     <string name="deck_not_found">Deck not found</string>
     <string name="back_to_my_decks">Back to My Decks</string>
+    <string name="deck_ram_limits">RAM limits</string>
+    <string name="deck_color_ram_limit">%1$s RAM limit: %2$d</string>
+    <string name="deck_ram_explanation">Each main card is checked separately. RAM is not spent; copies do not consume a shared budget.</string>
+    <string name="deck_basic_checks">Basic checks</string>
+    <string name="deck_main_count_range">Main: %1$d/40–50</string>
+    <string name="deck_validation_scope">Basic checks only; tournament legality is not checked. Warnings allow Save draft.</string>
+    <string name="deck_legend_count_warning">Choose exactly 3 Legends; currently %1$d.</string>
+    <string name="deck_main_count_warning">Main needs 40–50 cards; currently %1$d.</string>
+    <string name="deck_duplicate_legend_warning">Legend name must be unique: %1$s.</string>
+    <string name="deck_copy_limit_warning">%1$s / %2$s: %3$d copies; maximum 3.</string>
+    <string name="deck_legend_in_main_warning">%1$s is a Legend and cannot be in Main.</string>
+    <string name="deck_card_ram_warning">%1$s needs %2$s RAM %3$d; limit %4$d.</string>
+    <string name="deck_no_basic_warnings">No basic warnings.</string>
 </resources>

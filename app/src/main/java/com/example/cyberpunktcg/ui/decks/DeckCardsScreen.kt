@@ -22,6 +22,7 @@ import com.example.cyberpunktcg.data.model.Card
 import com.example.cyberpunktcg.data.model.CardColor
 import com.example.cyberpunktcg.data.model.CardType
 import com.example.cyberpunktcg.data.model.Deck
+import com.example.cyberpunktcg.domain.DeckValidation
 import com.example.cyberpunktcg.ui.browser.CardBrowser
 import com.example.cyberpunktcg.ui.browser.CardBrowserState
 import com.example.cyberpunktcg.ui.browser.CardSortField
@@ -31,6 +32,7 @@ import com.example.cyberpunktcg.ui.components.CardPreviewTile
 @Composable
 internal fun DeckCardsScreen(
     deck: Deck?,
+    validation: DeckValidation?,
     cards: List<Card>,
     state: CardBrowserState,
     onQueryChange: (String) -> Unit,
@@ -73,6 +75,9 @@ internal fun DeckCardsScreen(
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 CardPreviewTile(card = card, modifier = Modifier.fillMaxWidth())
                 Text(stringResource(R.string.deck_card_copies, quantity))
+                validation?.ramWarnings?.firstOrNull { it.cardId == card.id }?.let { warning ->
+                    CardRamWarningText(warning)
+                }
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     OutlinedButton(
                         onClick = { onRemoveCard(card.id) },

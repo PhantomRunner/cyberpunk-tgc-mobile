@@ -10,6 +10,9 @@ import com.example.cyberpunktcg.data.model.Deck
 import com.example.cyberpunktcg.data.model.DeckItem
 import com.example.cyberpunktcg.data.sample.DemoCards
 import java.util.UUID
+import com.example.cyberpunktcg.domain.DeckValidation
+import com.example.cyberpunktcg.domain.countCardCopies
+import com.example.cyberpunktcg.domain.validateDeck
 
 internal class DecksViewModel(private val cards: List<Card> = DemoCards.cards) : ViewModel() {
     var decks: List<Deck> by mutableStateOf(emptyList())
@@ -74,12 +77,7 @@ internal class DecksViewModel(private val cards: List<Card> = DemoCards.cards) :
     fun canAddCard(deckId: String, cardId: String): Boolean {
         val deck = editingDeck(deckId) ?: return false
         val card = mainCards.firstOrNull { it.id == cardId } ?: return false
-        // Different print IDs still share the three-copy limit for name + subtitle.
-        val matchingIds = mainCards.filter {
-            it.name == card.name && it.subtitle == card.subtitle
-        }.map { it.id }
-        val copies = deck.items.filter { it.cardId in matchingIds }.sumOf { it.quantity }
-        return copies < 3
+        return countCardCopies(deck.items, cards, card) < 3
     }
 
     fun addCard(deckId: String, cardId: String) {
@@ -104,6 +102,11 @@ internal class DecksViewModel(private val cards: List<Card> = DemoCards.cards) :
             }
         }
         workingCopies = workingCopies + (deckId to deck.copy(items = items))
+    }
+
+    fun validation(deckId: String?): DeckValidation? {
+        val deck = editingDeck(deckId) ?: return null
+        return validateDeck(deck, cards)
     }
 
     fun saveDraft(deckId: String): Boolean {

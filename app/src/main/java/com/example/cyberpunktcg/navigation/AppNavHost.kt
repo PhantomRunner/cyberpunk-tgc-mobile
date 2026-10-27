@@ -88,6 +88,7 @@ internal fun AppNavHost(
             val deck = decksViewModel.editingDeck(deckId)
             DeckEditorScreen(
                 deck = deck,
+                validation = decksViewModel.validation(deckId),
                 onBack = onEditorBack,
                 legends = decksViewModel.legends,
                 mainCards = decksViewModel.mainCards,
@@ -113,8 +114,8 @@ internal fun AppNavHost(
         ) { entry ->
             val deckId = entry.arguments?.getString("deckId")
             val deck = decksViewModel.editingDeck(deckId)
-            // The editor owns browsing state so Back and re-opening Add cards retain it.
-            // After process death there is no session deck; the route owner suffices for the error screen.
+
+
             val browserOwner = remember(entry, deckId) {
                 if (deckId != null && decksViewModel.findDeck(deckId) != null) {
                     navController.getBackStackEntry(deckEditorRoute(deckId))
@@ -123,6 +124,7 @@ internal fun AppNavHost(
             val browser: CardBrowserViewModel = viewModel(viewModelStoreOwner = browserOwner, key = "deck_cards")
             DeckCardsScreen(
                 deck = deck,
+                validation = decksViewModel.validation(deckId),
                 cards = browser.visibleCards(decksViewModel.mainCards),
                 state = browser.uiState,
                 onQueryChange = browser::setQuery,
