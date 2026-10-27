@@ -1,9 +1,9 @@
-package com.example.cyberpunktcg.ui.collection
+package com.example.cyberpunktcg.ui.browser
 
 import com.example.cyberpunktcg.data.model.CardColor
 import com.example.cyberpunktcg.data.model.CardType
 
-internal data class CollectionUiState(
+internal data class CardBrowserState(
     val query: String = "",
     val selectedTypes: Set<CardType> = emptySet(),
     val selectedColors: Set<CardColor> = emptySet(),

@@ -1,4 +1,4 @@
-package com.example.cyberpunktcg.ui.collection
+package com.example.cyberpunktcg.ui.browser
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.example.cyberpunktcg.R
 
 @Composable
-internal fun CollectionSortMenu(
+internal fun CardSortMenu(
     field: CardSortField,
     direction: SortDirection,
     onFieldChange: (CardSortField) -> Unit,

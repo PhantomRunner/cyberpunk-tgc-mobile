@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.example.cyberpunktcg.data.model.Card
 import com.example.cyberpunktcg.data.model.CardType
 import com.example.cyberpunktcg.data.model.Deck
+import com.example.cyberpunktcg.data.model.DeckItem
 import com.example.cyberpunktcg.data.sample.DemoCards
 import java.util.UUID
 
@@ -18,6 +19,7 @@ internal class DecksViewModel(private val cards: List<Card> = DemoCards.cards) :
     private var workingCopies: Map<String, Deck> by mutableStateOf(emptyMap())
 
     val legends: List<Card> = cards.filter { it.type == CardType.LEGEND }
+    val mainCards: List<Card> = cards.filter { it.type != CardType.LEGEND }
 
     fun createDeck(name: String): Deck? {
         val trimmedName = name.trim()
@@ -63,6 +65,45 @@ internal class DecksViewModel(private val cards: List<Card> = DemoCards.cards) :
     fun removeLegend(deckId: String, cardId: String) {
         val deck = editingDeck(deckId) ?: return
         workingCopies = workingCopies + (deckId to deck.copy(legendIds = deck.legendIds - cardId))
+    }
+
+    fun cardQuantity(deckId: String, cardId: String): Int {
+        return editingDeck(deckId)?.items?.firstOrNull { it.cardId == cardId }?.quantity ?: 0
+    }
+
+    fun canAddCard(deckId: String, cardId: String): Boolean {
+        val deck = editingDeck(deckId) ?: return false
+        val card = mainCards.firstOrNull { it.id == cardId } ?: return false
+        // Different print IDs still share the three-copy limit for name + subtitle.
+        val matchingIds = mainCards.filter {
+            it.name == card.name && it.subtitle == card.subtitle
+        }.map { it.id }
+        val copies = deck.items.filter { it.cardId in matchingIds }.sumOf { it.quantity }
+        return copies < 3
+    }
+
+    fun addCard(deckId: String, cardId: String) {
+        if (!canAddCard(deckId, cardId)) return
+        val deck = editingDeck(deckId) ?: return
+        val quantity = cardQuantity(deckId, cardId)
+        val items = if (quantity == 0) {
+            deck.items + DeckItem(cardId, 1)
+        } else {
+            deck.items.map { if (it.cardId == cardId) it.copy(quantity = it.quantity + 1) else it }
+        }
+        workingCopies = workingCopies + (deckId to deck.copy(items = items))
+    }
+
+    fun removeCard(deckId: String, cardId: String) {
+        val deck = editingDeck(deckId) ?: return
+        val items = deck.items.mapNotNull { item ->
+            when {
+                item.cardId != cardId -> item
+                item.quantity > 1 -> item.copy(quantity = item.quantity - 1)
+                else -> null
+            }
+        }
+        workingCopies = workingCopies + (deckId to deck.copy(items = items))
     }
 
     fun saveDraft(deckId: String): Boolean {

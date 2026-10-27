@@ -43,6 +43,8 @@ internal fun DeckEditorScreen(
     deck: Deck?,
     onBack: () -> Unit,
     legends: List<Card>,
+    mainCards: List<Card>,
+    onAddCards: () -> Unit,
     hasUnsavedChanges: Boolean,
     onNameChange: (String) -> Unit,
     canAddLegend: (String) -> Boolean,
@@ -110,7 +112,25 @@ internal fun DeckEditorScreen(
                 }
             }
             Text(stringResource(R.string.deck_main_count, deck.mainCardCount))
-            Text(stringResource(R.string.main_editing_unavailable))
+            Button(onClick = onAddCards, modifier = Modifier.fillMaxWidth()) {
+                Text(stringResource(R.string.add_cards))
+            }
+            if (deck.items.isEmpty()) {
+                Text(stringResource(R.string.no_main_cards))
+            }
+            deck.items.forEach { item ->
+                val card = mainCards.firstOrNull { it.id == item.cardId }
+                if (card != null) {
+                    OutlinedCard(modifier = Modifier.fillMaxWidth()) {
+                        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Text(card.name, style = MaterialTheme.typography.titleMedium)
+                            Text(card.subtitle)
+                            Text(stringResource(card.type.labelResId))
+                            Text(stringResource(R.string.deck_card_copies, item.quantity))
+                        }
+                    }
+                }
+            }
         }
     }
     if (showLegendPicker && deck != null) {

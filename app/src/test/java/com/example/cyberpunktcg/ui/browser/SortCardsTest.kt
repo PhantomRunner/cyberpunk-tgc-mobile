@@ -1,4 +1,4 @@
-package com.example.cyberpunktcg.ui.collection
+package com.example.cyberpunktcg.ui.browser
 
 import com.example.cyberpunktcg.data.model.Card
 import com.example.cyberpunktcg.data.model.CardColor
@@ -40,7 +40,7 @@ class SortCardsTest {
 
     @Test
     fun sortingAppliesToTheSearchAndMultiselectResultsOnly() {
-        val state = CollectionUiState(
+        val state = CardBrowserState(
             query = "  aLp  ",
             selectedTypes = setOf(CardType.LEGEND, CardType.UNIT),
             selectedColors = setOf(CardColor.RED, CardColor.BLUE),

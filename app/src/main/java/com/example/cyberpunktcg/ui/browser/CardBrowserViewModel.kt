@@ -1,4 +1,4 @@
-package com.example.cyberpunktcg.ui.collection
+package com.example.cyberpunktcg.ui.browser
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -9,9 +9,9 @@ import com.example.cyberpunktcg.data.model.Card
 import com.example.cyberpunktcg.data.model.CardColor
 import com.example.cyberpunktcg.data.model.CardType
 
-internal class CollectionViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel() {
+internal class CardBrowserViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel() {
     var uiState by mutableStateOf(
-        CollectionUiState(
+        CardBrowserState(
             query = savedStateHandle[QUERY] ?: "",
             selectedTypes = savedStateHandle.get<ArrayList<String>>(TYPES)
                 ?.map { CardType.valueOf(it) }?.toSet() ?: emptySet(),
@@ -55,6 +55,7 @@ internal class CollectionViewModel(private val savedStateHandle: SavedStateHandl
         filterCards(cards, uiState), uiState.sortField, uiState.sortDirection,
     )
 
+    // Keep the existing keys; each navigation owner has a separate SavedStateHandle.
     private companion object {
         const val QUERY = "collection_query"
         const val TYPES = "collection_types"

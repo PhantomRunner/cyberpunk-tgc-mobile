@@ -57,7 +57,12 @@
     <string name="deck_main_count">Main: %1$d</string>
     <string name="deck_legend_count">Legends: %1$d/3</string>
     <string name="empty_deck">Empty draft</string>
-    <string name="main_editing_unavailable">No main cards yet. Main-deck editing is not available in this demo yet.</string>
+    <string name="add_cards">Add cards</string>
+    <string name="no_main_cards">No main cards yet.</string>
+    <string name="deck_card_copies">Copies: %1$d</string>
+    <string name="add_card_copy">Add one %1$s</string>
+    <string name="remove_card_copy">Remove one %1$s</string>
+    <string name="deck_cards_hint">Demo catalog: Unit, Program and Gear. Changes stay in the working copy until Save draft.</string>
     <string name="deck_name_required">Enter a deck name.</string>
     <string name="save_draft">Save draft</string>
     <string name="draft_saved">Draft saved for this session.</string>
@@ -68,7 +73,7 @@
     <string name="remove_legend">Remove Legend</string>
     <string name="legend_selection_hint">Choose up to three Legends with different names. This demo has only Test 0.</string>
     <string name="discard_changes_title">Discard changes?</string>
-    <string name="discard_changes_message">Unsaved name and Legend changes will be lost.</string>
+    <string name="discard_changes_message">All unsaved deck changes will be lost.</string>
     <string name="discard_changes">Discard changes</string>
     <string name="keep_editing">Keep editing</string>
     <string name="deck_not_found">Deck not found</string>

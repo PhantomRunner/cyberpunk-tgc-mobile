@@ -1,4 +1,4 @@
-package com.example.cyberpunktcg.ui.collection
+package com.example.cyberpunktcg.ui.browser
 
 import com.example.cyberpunktcg.data.model.Card
 

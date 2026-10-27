@@ -30,75 +30,77 @@ import com.example.cyberpunktcg.data.model.Card
 import com.example.cyberpunktcg.ui.theme.frameColor
 
 @Composable
-internal fun CardPreviewTile(card: Card, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    OutlinedCard(
-        onClick = onClick,
-        modifier = modifier,
-        border = BorderStroke(2.dp, card.color.frameColor),
-        colors = CardDefaults.outlinedCardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-        ),
-    ) {
-        Box {
-            Image(
-                painter = painterResource(R.drawable.card_art_placeholder),
-                contentDescription = null,
-                modifier = Modifier.matchParentSize(),
-                contentScale = ContentScale.Crop,
-                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.outline),
-                alpha = 0.35f,
-            )
-            Column(
-                modifier = Modifier.fillMaxWidth().heightIn(min = 200.dp).padding(8.dp),
-                verticalArrangement = Arrangement.SpaceBetween,
+internal fun CardPreviewTile(card: Card, onClick: (() -> Unit)? = null, modifier: Modifier = Modifier) {
+    val border = BorderStroke(2.dp, card.color.frameColor)
+    val colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)
+    if (onClick == null) {
+        OutlinedCard(modifier = modifier, border = border, colors = colors) { PreviewContent(card) }
+    } else {
+        OutlinedCard(onClick = onClick, modifier = modifier, border = border, colors = colors) { PreviewContent(card) }
+    }
+}
+
+@Composable
+private fun PreviewContent(card: Card) {
+    Box {
+        Image(
+            painter = painterResource(R.drawable.card_art_placeholder),
+            contentDescription = null,
+            modifier = Modifier.matchParentSize(),
+            contentScale = ContentScale.Crop,
+            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.outline),
+            alpha = 0.35f,
+        )
+        Column(
+            modifier = Modifier.fillMaxWidth().heightIn(min = 200.dp).padding(8.dp),
+            verticalArrangement = Arrangement.SpaceBetween,
+        ) {
+            PreviewHeader(card)
+            Surface(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(vertical = 12.dp),
+                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.94f),
+                contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                shape = RoundedCornerShape(4.dp),
             ) {
-                PreviewHeader(card)
-                Surface(
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(vertical = 12.dp),
-                    color = MaterialTheme.colorScheme.surface.copy(alpha = 0.94f),
-                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    shape = RoundedCornerShape(4.dp),
-                ) {
-                    Text(
-                        text = stringResource(R.string.art_placeholder),
-                        modifier = Modifier.padding(4.dp),
-                        style = MaterialTheme.typography.labelSmall,
-                        textAlign = TextAlign.Center,
-                    )
-                }
-                Column(
+                Text(
+                    text = stringResource(R.string.art_placeholder),
+                    modifier = Modifier.padding(4.dp),
+                    style = MaterialTheme.typography.labelSmall,
+                    textAlign = TextAlign.Center,
+                )
+            }
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                Text(
+                    text = card.name,
+                    style = MaterialTheme.typography.titleSmall,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Row(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
-                        text = card.name,
-                        style = MaterialTheme.typography.titleSmall,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
+                        text = stringResource(card.color.labelResId),
+                        modifier = Modifier.weight(1f),
+                        style = MaterialTheme.typography.labelMedium,
                     )
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
+                    Surface(
+                        color = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        shape = RoundedCornerShape(4.dp),
                     ) {
                         Text(
-                            text = stringResource(card.color.labelResId),
-                            modifier = Modifier.weight(1f),
+                            text = stringResource(R.string.card_power, card.power),
+                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp),
                             style = MaterialTheme.typography.labelMedium,
                         )
-                        Surface(
-                            color = MaterialTheme.colorScheme.primaryContainer,
-                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                            shape = RoundedCornerShape(4.dp),
-                        ) {
-                            Text(
-                                text = stringResource(R.string.card_power, card.power),
-                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp),
-                                style = MaterialTheme.typography.labelMedium,
-                            )
-                        }
                     }
                 }
             }

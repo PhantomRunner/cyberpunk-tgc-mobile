@@ -1,4 +1,4 @@
-package com.example.cyberpunktcg.ui.collection
+package com.example.cyberpunktcg.ui.browser
 
 import com.example.cyberpunktcg.data.model.Card
 import com.example.cyberpunktcg.data.model.CardColor
@@ -18,24 +18,24 @@ class FilterCardsTest {
 
     @Test
     fun emptyGroupsAndBlankQueryKeepAllCardsInOriginalOrder() {
-        assertEquals(cards, filterCards(cards, CollectionUiState(query = "   ")))
+        assertEquals(cards, filterCards(cards, CardBrowserState(query = "   ")))
     }
 
     @Test
     fun multipleTypesIncludeAnySelectedTypeWithoutRestrictingColors() {
-        val state = CollectionUiState(selectedTypes = setOf(CardType.LEGEND, CardType.UNIT))
+        val state = CardBrowserState(selectedTypes = setOf(CardType.LEGEND, CardType.UNIT))
         assertEquals(listOf("1", "2", "3"), filterCards(cards, state).map { it.id })
     }
 
     @Test
     fun multipleColorsIncludeAnySelectedColorWithoutRestrictingTypes() {
-        val state = CollectionUiState(selectedColors = setOf(CardColor.RED, CardColor.BLUE))
+        val state = CardBrowserState(selectedColors = setOf(CardColor.RED, CardColor.BLUE))
         assertEquals(listOf("1", "2", "3"), filterCards(cards, state).map { it.id })
     }
 
     @Test
     fun legendAndUnitWithRedIncludeBothRedTypesOnly() {
-        val state = CollectionUiState(
+        val state = CardBrowserState(
             selectedTypes = setOf(CardType.LEGEND, CardType.UNIT),
             selectedColors = setOf(CardColor.RED),
         )
@@ -44,7 +44,7 @@ class FilterCardsTest {
 
     @Test
     fun queryIsTrimmedCaseInsensitiveAndCombinedWithBothGroups() {
-        val state = CollectionUiState(
+        val state = CardBrowserState(
             query = "  rUnN  ",
             selectedTypes = setOf(CardType.LEGEND, CardType.UNIT),
             selectedColors = setOf(CardColor.RED, CardColor.YELLOW),
@@ -54,18 +54,18 @@ class FilterCardsTest {
 
     @Test
     fun incompatibleGroupsOrQueryGiveEmptyResults() {
-        val state = CollectionUiState(
+        val state = CardBrowserState(
             selectedTypes = setOf(CardType.PROGRAM),
             selectedColors = setOf(CardColor.RED),
         )
         assertTrue(filterCards(cards, state).isEmpty())
-        assertTrue(filterCards(cards, CollectionUiState(query = "missing")).isEmpty())
-        assertTrue(filterCards(emptyList(), CollectionUiState()).isEmpty())
+        assertTrue(filterCards(cards, CardBrowserState(query = "missing")).isEmpty())
+        assertTrue(filterCards(emptyList(), CardBrowserState()).isEmpty())
     }
 
     @Test
     fun clearingOneConditionKeepsTheOtherRestrictions() {
-        val state = CollectionUiState(
+        val state = CardBrowserState(
             query = "Neon",
             selectedTypes = setOf(CardType.UNIT),
             selectedColors = setOf(CardColor.RED),
