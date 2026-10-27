@@ -12,7 +12,7 @@ internal enum class AppDestination(val route: String, @get:StringRes val titleRe
     Scanner("scanner", R.string.scanner),
     Settings("settings", R.string.settings),
     CardDetails("card_details/{cardId}", R.string.card_details),
-    DeckEditor("deck_editor", R.string.deck_editor),
+    DeckEditor("deck_editor/{deckId}", R.string.deck_editor),
     DeckPreview("deck_preview", R.string.deck_preview);
 
 
@@ -26,4 +26,8 @@ internal enum class AppDestination(val route: String, @get:StringRes val titleRe
 
 internal fun cardDetailsRoute(cardId: String): String {
     return "card_details/${Uri.encode(cardId)}"
+}
+
+internal fun deckEditorRoute(deckId: String): String {
+    return "deck_editor/${Uri.encode(deckId)}"
 }

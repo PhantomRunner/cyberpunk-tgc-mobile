@@ -47,6 +47,17 @@
     <string name="back">Back</string>
     <string name="screen_placeholder">Screen placeholder</string>
     <string name="card_not_found">Card not found</string>
-    <string name="open_deck_editor">Open deck editor placeholder</string>
-    <string name="open_deck_preview">Open deck preview placeholder</string>
+    <string name="deck_session_notice">Demo: decks are kept only for this app session.</string>
+    <string name="new_deck">New deck</string>
+    <string name="no_decks_yet">No decks yet</string>
+    <string name="deck_name">Deck name</string>
+    <string name="create_deck">Create</string>
+    <string name="cancel">Cancel</string>
+    <string name="deck_draft">Draft</string>
+    <string name="deck_main_count">Main: %1$d</string>
+    <string name="deck_legend_count">Legends: %1$d/3</string>
+    <string name="empty_deck">Empty draft</string>
+    <string name="deck_editing_unavailable">Card editing is not available in this demo yet.</string>
+    <string name="deck_not_found">Deck not found</string>
+    <string name="back_to_my_decks">Back to My Decks</string>
 </resources>

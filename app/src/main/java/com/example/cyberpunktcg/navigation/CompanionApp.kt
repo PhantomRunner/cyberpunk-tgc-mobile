@@ -7,6 +7,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.cyberpunktcg.ui.decks.DecksViewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -14,6 +16,8 @@ import androidx.navigation.compose.rememberNavController
 
 @Composable
 fun CompanionApp(isDarkTheme: Boolean, onDarkThemeChange: (Boolean) -> Unit) {
+    // Outside NavHost, the owner is MainActivity: every deck screen shares this session.
+    val decksViewModel: DecksViewModel = viewModel()
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
@@ -44,6 +48,7 @@ fun CompanionApp(isDarkTheme: Boolean, onDarkThemeChange: (Boolean) -> Unit) {
             navController = navController,
             isDarkTheme = isDarkTheme,
             onDarkThemeChange = onDarkThemeChange,
+            decksViewModel = decksViewModel,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)

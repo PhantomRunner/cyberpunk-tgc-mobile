@@ -14,6 +14,7 @@ import com.example.cyberpunktcg.ui.collection.CollectionScreen
 import com.example.cyberpunktcg.ui.collection.CollectionViewModel
 import com.example.cyberpunktcg.ui.decks.DeckEditorScreen
 import com.example.cyberpunktcg.ui.decks.DeckPreviewScreen
+import com.example.cyberpunktcg.ui.decks.DecksViewModel
 import com.example.cyberpunktcg.ui.decks.MyDecksScreen
 import com.example.cyberpunktcg.ui.home.HomeScreen
 import com.example.cyberpunktcg.ui.scanner.ScannerScreen
@@ -24,6 +25,7 @@ internal fun AppNavHost(
     navController: NavHostController,
     isDarkTheme: Boolean,
     onDarkThemeChange: (Boolean) -> Unit,
+    decksViewModel: DecksViewModel,
     modifier: Modifier = Modifier,
 ) {
     NavHost(
@@ -59,12 +61,36 @@ internal fun AppNavHost(
         }
         composable(AppDestination.Decks.route) {
             MyDecksScreen(
-                onOpenDeck = { navController.navigate(AppDestination.DeckEditor.route) },
+                decks = decksViewModel.decks,
+                onCreateDeck = { name ->
+                    val deck = decksViewModel.createDeck(name)
+                    if (deck != null) {
+                        navController.navigate(deckEditorRoute(deck.id)) {
+                            launchSingleTop = true
+                        }
+                    }
+                },
+                onOpenDeck = { deckId ->
+                    navController.navigate(deckEditorRoute(deckId)) {
+                        launchSingleTop = true
+                    }
+                },
             )
         }
-        composable(AppDestination.DeckEditor.route) {
+        composable(
+            route = AppDestination.DeckEditor.route,
+            arguments = listOf(navArgument("deckId") { type = NavType.StringType }),
+        ) { entry ->
+            val deck = decksViewModel.findDeck(entry.arguments?.getString("deckId"))
             DeckEditorScreen(
-                onOpenPreview = { navController.navigate(AppDestination.DeckPreview.route) },
+                deck = deck,
+                onBackToDecks = {
+                    if (!navController.popBackStack(AppDestination.Decks.route, false)) {
+                        navController.navigate(AppDestination.Decks.route) {
+                            launchSingleTop = true
+                        }
+                    }
+                },
             )
         }
         composable(AppDestination.DeckPreview.route) { DeckPreviewScreen() }
