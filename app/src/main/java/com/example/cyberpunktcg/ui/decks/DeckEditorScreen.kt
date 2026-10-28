@@ -29,6 +29,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.window.DialogWindowProvider
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -47,6 +48,7 @@ internal fun DeckEditorScreen(
     legends: List<Card>,
     mainCards: List<Card>,
     onAddCards: () -> Unit,
+    onPreview: () -> Unit,
     hasUnsavedChanges: Boolean,
     onNameChange: (String) -> Unit,
     canAddLegend: (String) -> Boolean,
@@ -56,6 +58,7 @@ internal fun DeckEditorScreen(
     onBackToDecks: () -> Unit,
 ) {
 
+    val focusManager = LocalFocusManager.current
     BackHandler(onBack = onBack)
     var showLegendPicker by rememberSaveable(deck?.id) { mutableStateOf(false) }
     Column(
@@ -86,6 +89,13 @@ internal fun DeckEditorScreen(
                 enabled = deck.name.isNotBlank() && hasUnsavedChanges,
                 modifier = Modifier.fillMaxWidth(),
             ) { Text(stringResource(R.string.save_draft)) }
+            OutlinedButton(
+                onClick = {
+                    focusManager.clearFocus()
+                    onPreview()
+                },
+                modifier = Modifier.fillMaxWidth(),
+            ) { Text(stringResource(R.string.deck_preview)) }
             Text(stringResource(if (hasUnsavedChanges) R.string.unsaved_changes else R.string.draft_saved))
             if (validation != null) {
                 DeckValidationSummary(validation)

@@ -16,6 +16,7 @@ import com.example.cyberpunktcg.ui.browser.CardBrowserViewModel
 import com.example.cyberpunktcg.ui.decks.DeckCardsScreen
 import com.example.cyberpunktcg.ui.decks.DeckEditorScreen
 import com.example.cyberpunktcg.ui.decks.DeckPreviewScreen
+import com.example.cyberpunktcg.ui.decks.DeckNotFoundScreen
 import com.example.cyberpunktcg.ui.decks.DecksViewModel
 import com.example.cyberpunktcg.ui.decks.MyDecksScreen
 import com.example.cyberpunktcg.ui.home.HomeScreen
@@ -31,6 +32,11 @@ internal fun AppNavHost(
     onEditorBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val onBackToDecks: () -> Unit = {
+        if (!navController.popBackStack(AppDestination.Decks.route, false)) {
+            navController.navigate(AppDestination.Decks.route) { launchSingleTop = true }
+        }
+    }
     NavHost(
         navController = navController,
         startDestination = AppDestination.Home.route,
@@ -93,19 +99,14 @@ internal fun AppNavHost(
                 legends = decksViewModel.legends,
                 mainCards = decksViewModel.mainCards,
                 onAddCards = { deckId?.let { navController.navigate(deckCardsRoute(it)) { launchSingleTop = true } } },
+                onPreview = { deckId?.let { navController.navigate(deckPreviewRoute(it)) { launchSingleTop = true } } },
                 hasUnsavedChanges = decksViewModel.hasUnsavedChanges(deckId),
                 onNameChange = { name -> deckId?.let { decksViewModel.renameDeck(it, name) } },
                 canAddLegend = { cardId -> deckId != null && decksViewModel.canAddLegend(deckId, cardId) },
                 onAddLegend = { cardId -> deckId?.let { decksViewModel.addLegend(it, cardId) } },
                 onRemoveLegend = { cardId -> deckId?.let { decksViewModel.removeLegend(it, cardId) } },
                 onSaveDraft = { deckId?.let { decksViewModel.saveDraft(it) } },
-                onBackToDecks = {
-                    if (!navController.popBackStack(AppDestination.Decks.route, false)) {
-                        navController.navigate(AppDestination.Decks.route) {
-                            launchSingleTop = true
-                        }
-                    }
-                },
+                onBackToDecks = onBackToDecks,
             )
         }
         composable(
@@ -135,14 +136,42 @@ internal fun AppNavHost(
                 canAddCard = { cardId -> deckId != null && decksViewModel.canAddCard(deckId, cardId) },
                 onAddCard = { cardId -> deckId?.let { decksViewModel.addCard(it, cardId) } },
                 onRemoveCard = { cardId -> deckId?.let { decksViewModel.removeCard(it, cardId) } },
-                onBackToDecks = {
-                    if (!navController.popBackStack(AppDestination.Decks.route, false)) {
-                        navController.navigate(AppDestination.Decks.route) { launchSingleTop = true }
-                    }
-                },
+                onBackToDecks = onBackToDecks,
             )
         }
-        composable(AppDestination.DeckPreview.route) { DeckPreviewScreen() }
+        composable(
+            route = AppDestination.DeckPreview.route,
+            arguments = listOf(navArgument("deckId") { type = NavType.StringType }),
+        ) { entry ->
+            val deckId = entry.arguments?.getString("deckId")
+            DeckPreviewScreen(
+                deck = decksViewModel.editingDeck(deckId),
+                legends = decksViewModel.legends,
+                mainCards = decksViewModel.mainCards,
+                onOpenCard = { cardId ->
+                    deckId?.let { navController.navigate(deckCardDetailsRoute(it, cardId)) { launchSingleTop = true } }
+                },
+                onBackToDecks = onBackToDecks,
+            )
+        }
+        composable(
+            route = AppDestination.DeckCardDetails.route,
+            arguments = listOf(
+                navArgument("deckId") { type = NavType.StringType },
+                navArgument("cardId") { type = NavType.StringType },
+            ),
+        ) { entry ->
+            val deck = decksViewModel.editingDeck(entry.arguments?.getString("deckId"))
+            if (deck == null) {
+                DeckNotFoundScreen(onBackToDecks)
+            } else {
+                val cardId = entry.arguments?.getString("cardId")
+                val card = DemoCards.cards.firstOrNull { card ->
+                    card.id == cardId && (card.id in deck.legendIds || deck.items.any { it.cardId == card.id })
+                }
+                CardDetailsScreen(card)
+            }
+        }
         composable(AppDestination.Scanner.route) { ScannerScreen() }
         composable(AppDestination.Settings.route) {
             SettingsScreen(

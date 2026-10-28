@@ -91,4 +91,7 @@
     <string name="deck_legend_in_main_warning">%1$s is a Legend and cannot be in Main.</string>
     <string name="deck_card_ram_warning">%1$s needs %2$s RAM %3$d; limit %4$d.</string>
     <string name="deck_no_basic_warnings">No basic warnings.</string>
+    <string name="deck_preview_notice">Working copy. Use Save draft in the editor to save changes for this session.</string>
+    <string name="no_legends_selected">No Legends selected.</string>
+    <string name="unnamed_draft">Unnamed draft</string>
 </resources>
