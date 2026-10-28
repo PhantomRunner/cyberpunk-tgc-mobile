@@ -65,6 +65,7 @@ internal fun DeckCardsScreen(
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(deck.name, style = MaterialTheme.typography.titleLarge)
                 Text(stringResource(R.string.deck_main_count, deck.mainCardCount))
+                if (validation != null) DeckAllowedColorsText(validation)
                 Text(stringResource(R.string.deck_cards_hint), style = MaterialTheme.typography.bodyMedium)
             }
         },
@@ -75,6 +76,9 @@ internal fun DeckCardsScreen(
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 CardPreviewTile(card = card, modifier = Modifier.fillMaxWidth())
                 Text(stringResource(R.string.deck_card_copies, quantity))
+                if (validation != null && card.color !in validation.allowedColors) {
+                    CardColorWarningText(card)
+                }
                 validation?.ramWarnings?.firstOrNull { it.cardId == card.id }?.let { warning ->
                     CardRamWarningText(warning)
                 }

@@ -20,6 +20,8 @@ internal data class DeckValidation(
     val legendCount: Int,
     val mainCount: Int,
     val ramLimits: Map<CardColor, Int>,
+    val allowedColors: Set<CardColor>,
+    val colorWarnings: List<Card>,
     val duplicateLegendNames: List<String>,
     val copyWarnings: List<CardCopyWarning>,
     val legendsInMain: List<Card>,
@@ -29,7 +31,11 @@ internal data class DeckValidation(
     val hasMainCountWarning: Boolean get() = mainCount !in 40..50
     val hasWarnings: Boolean
         get() = hasLegendCountWarning || hasMainCountWarning || duplicateLegendNames.isNotEmpty() ||
-            copyWarnings.isNotEmpty() || legendsInMain.isNotEmpty() || ramWarnings.isNotEmpty()
+            copyWarnings.isNotEmpty() || legendsInMain.isNotEmpty() || colorWarnings.isNotEmpty() || ramWarnings.isNotEmpty()
+}
+
+internal fun selectedLegendColors(deck: Deck, cards: List<Card>): Set<CardColor> {
+    return cards.filter { it.type == CardType.LEGEND && it.id in deck.legendIds }.map { it.color }.toSet()
 }
 
 internal fun calculateRamLimits(legends: List<Card>): Map<CardColor, Int> {
@@ -51,6 +57,7 @@ internal fun validateDeck(deck: Deck, cards: List<Card>): DeckValidation {
     val mainCards = deck.items.mapNotNull { cardsById[it.cardId] }
         .filter { it.type != CardType.LEGEND }.distinctBy { it.id }
     val limits = calculateRamLimits(legends)
+    val allowedColors = selectedLegendColors(deck, cards)
     val mainCount = deck.items.filter { item ->
         val card = cardsById[item.cardId]
         card != null && card.type != CardType.LEGEND
@@ -70,6 +77,8 @@ internal fun validateDeck(deck: Deck, cards: List<Card>): DeckValidation {
         legendCount = legends.size,
         mainCount = mainCount,
         ramLimits = limits,
+        allowedColors = allowedColors,
+        colorWarnings = mainCards.filter { it.color !in allowedColors },
         duplicateLegendNames = legends.groupingBy { it.name }.eachCount().filterValues { it > 1 }.keys.toList(),
         copyWarnings = copyWarnings,
         legendsInMain = deck.items.mapNotNull { cardsById[it.cardId] }

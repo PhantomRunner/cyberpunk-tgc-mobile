@@ -80,12 +80,13 @@ class DeckValidationTest {
     }
 
     @Test
-    fun ramZeroPassesWithoutLegendsButPositiveRamFailsPerColor() {
+    fun ramZeroNeedsNoBudgetButStillRequiresLegendColor() {
         val deck = Deck("zero", "Zero", items = DemoCards.cards.drop(1).map { DeckItem(it.id, 1) })
         val result = validateDeck(deck, DemoCards.cards)
         assertEquals(listOf("demo4", "demo5", "demo6"), result.ramWarnings.map { it.cardId })
         assertTrue(result.ramWarnings.all { it.availableRam == 0 })
         assertFalse(result.ramWarnings.any { it.cardId == "demo2" || it.cardId == "demo3" })
+        assertEquals(DemoCards.cards.drop(1).map { it.id }, result.colorWarnings.map { it.id })
     }
 
     @Test
@@ -105,7 +106,7 @@ class DeckValidationTest {
 
     @Test
     fun syntheticCompleteCompositionHasNoBasicWarnings() {
-        val legends = (1..3).map { legend.copy(id = "legend$it", name = "Legend $it") }
+        val legends = (1..3).map { legend.copy(id = "legend$it", name = "Legend $it", color = unit.color) }
         val main = (1..14).map { unit.copy(id = "main$it", name = "Main $it", ram = 0) }
         val deck = Deck("complete", "Complete", legendIds = legends.map { it.id },
             items = main.mapIndexed { index, card -> DeckItem(card.id, if (index == 13) 1 else 3) })
@@ -113,4 +114,19 @@ class DeckValidationTest {
         assertEquals(40, result.mainCount)
         assertFalse(result.hasWarnings)
     }
+    @Test
+    fun completeRamZeroDeckStillWarnsWhenLegendColorsDoNotMatch() {
+        val legends = (1..3).map { legend.copy(id = "legend$it", name = "Legend $it") }
+        val main = (1..14).map { unit.copy(id = "main$it", name = "Main $it", ram = 0) }
+        val deck = Deck("colors", "Colors", legendIds = legends.map { it.id },
+            items = main.mapIndexed { index, card -> DeckItem(card.id, if (index == 13) 1 else 3) })
+        val result = validateDeck(deck, legends + main)
+        assertFalse(result.hasMainCountWarning)
+        assertFalse(result.hasLegendCountWarning)
+        assertTrue(result.copyWarnings.isEmpty())
+        assertTrue(result.ramWarnings.isEmpty())
+        assertEquals(main.map { it.id }, result.colorWarnings.map { it.id })
+        assertTrue(result.hasWarnings)
+    }
+
 }

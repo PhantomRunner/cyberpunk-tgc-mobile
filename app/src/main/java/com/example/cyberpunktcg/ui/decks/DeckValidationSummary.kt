@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.cyberpunktcg.R
+import com.example.cyberpunktcg.data.model.Card
 import com.example.cyberpunktcg.data.model.CardColor
 import com.example.cyberpunktcg.domain.CardRamWarning
 import com.example.cyberpunktcg.domain.DeckValidation
@@ -21,6 +22,7 @@ import com.example.cyberpunktcg.ui.components.labelResId
 internal fun DeckValidationSummary(validation: DeckValidation) {
     OutlinedCard(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            DeckAllowedColorsText(validation)
             Text(stringResource(R.string.deck_ram_limits), style = MaterialTheme.typography.titleMedium)
             CardColor.entries.forEach { color ->
                 Text(stringResource(R.string.deck_color_ram_limit, stringResource(color.labelResId), validation.ramLimits.getValue(color)))
@@ -45,12 +47,29 @@ internal fun DeckValidationSummary(validation: DeckValidation) {
             validation.legendsInMain.forEach { card ->
                 ValidationWarning(stringResource(R.string.deck_legend_in_main_warning, card.name))
             }
+            validation.colorWarnings.forEach { card -> CardColorWarningText(card) }
             validation.ramWarnings.forEach { warning -> CardRamWarningText(warning) }
             if (!validation.hasWarnings) {
                 Text(stringResource(R.string.deck_no_basic_warnings))
             }
         }
     }
+}
+
+@Composable
+internal fun DeckAllowedColorsText(validation: DeckValidation) {
+    if (validation.allowedColors.isEmpty()) {
+        Text(stringResource(R.string.deck_select_legend_colors))
+    } else {
+        val labels = CardColor.entries.filter { it in validation.allowedColors }
+            .map { stringResource(it.labelResId) }.joinToString(", ")
+        Text(stringResource(R.string.deck_allowed_colors, labels))
+    }
+}
+
+@Composable
+internal fun CardColorWarningText(card: Card) {
+    ValidationWarning(stringResource(R.string.deck_card_color_warning, card.name, stringResource(card.color.labelResId)))
 }
 
 @Composable

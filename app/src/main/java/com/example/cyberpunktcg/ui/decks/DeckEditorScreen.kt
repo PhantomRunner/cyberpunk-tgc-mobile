@@ -1,6 +1,7 @@
 package com.example.cyberpunktcg.ui.decks
 
 import android.os.Build
+import androidx.compose.foundation.BorderStroke
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -38,6 +40,7 @@ import com.example.cyberpunktcg.data.model.Card
 import com.example.cyberpunktcg.data.model.Deck
 import com.example.cyberpunktcg.domain.DeckValidation
 import com.example.cyberpunktcg.ui.components.labelResId
+import com.example.cyberpunktcg.ui.theme.frameColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -102,14 +105,17 @@ internal fun DeckEditorScreen(
             }
             Text(stringResource(R.string.deck_legend_count, deck.legendIds.size))
             repeat(3) { index ->
-                OutlinedCard(modifier = Modifier.fillMaxWidth()) {
+                val legendId = deck.legendIds.getOrNull(index)
+                val legend = legends.firstOrNull { it.id == legendId }
+                OutlinedCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    border = legend?.let { BorderStroke(2.dp, it.color.frameColor) } ?: CardDefaults.outlinedCardBorder(),
+                ) {
                     Column(
                         modifier = Modifier.padding(12.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         Text(stringResource(R.string.legend_slot, index + 1), style = MaterialTheme.typography.titleSmall)
-                        val legendId = deck.legendIds.getOrNull(index)
-                        val legend = legends.firstOrNull { it.id == legendId }
                         if (legend != null) {
                             Text(legend.name, style = MaterialTheme.typography.titleMedium)
                             Text(legend.subtitle)
@@ -136,12 +142,15 @@ internal fun DeckEditorScreen(
             deck.items.forEach { item ->
                 val card = mainCards.firstOrNull { it.id == item.cardId }
                 if (card != null) {
-                    OutlinedCard(modifier = Modifier.fillMaxWidth()) {
+                    OutlinedCard(modifier = Modifier.fillMaxWidth(), border = BorderStroke(2.dp, card.color.frameColor)) {
                         Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             Text(card.name, style = MaterialTheme.typography.titleMedium)
                             Text(card.subtitle)
                             Text(stringResource(card.type.labelResId))
                             Text(stringResource(R.string.deck_card_copies, item.quantity))
+                            if (validation != null && card.color !in validation.allowedColors) {
+                                CardColorWarningText(card)
+                            }
                             validation?.ramWarnings?.firstOrNull { it.cardId == card.id }?.let { warning ->
                                 CardRamWarningText(warning)
                             }
@@ -173,7 +182,7 @@ internal fun DeckEditorScreen(
                     Text(stringResource(R.string.legend_selection_hint))
                 }
                 items(legends, key = { it.id }) { legend ->
-                    OutlinedCard(modifier = Modifier.fillMaxWidth()) {
+                    OutlinedCard(modifier = Modifier.fillMaxWidth(), border = BorderStroke(2.dp, legend.color.frameColor)) {
                         Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             Text(legend.name, style = MaterialTheme.typography.titleMedium)
                             Text(legend.subtitle)
