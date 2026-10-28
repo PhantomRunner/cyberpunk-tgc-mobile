@@ -62,7 +62,7 @@
     <string name="deck_card_copies">Copies: %1$d</string>
     <string name="add_card_copy">Add one %1$s</string>
     <string name="remove_card_copy">Remove one %1$s</string>
-    <string name="deck_cards_hint">Demo catalog: Unit, Program and Gear. Changes stay in the working copy until Save draft.</string>
+    <string name="deck_cards_hint">Demo catalog: Unit, Program and Gear. Only selected Legend colors can be added. Use Save draft in the editor.</string>
     <string name="deck_name_required">Enter a deck name.</string>
     <string name="save_draft">Save draft</string>
     <string name="draft_saved">Draft saved for this session.</string>
@@ -94,4 +94,11 @@
     <string name="deck_preview_notice">Working copy. Use Save draft in the editor to save changes for this session.</string>
     <string name="no_legends_selected">No Legends selected.</string>
     <string name="unnamed_draft">Unnamed draft</string>
+    <string name="delete_deck">Delete</string>
+    <string name="delete_named_deck">Delete deck %1$s</string>
+    <string name="delete_deck_title">Delete deck?</string>
+    <string name="delete_deck_message">Delete “%1$s” from this session? This also removes its draft changes.</string>
+    <string name="deck_select_legend_colors">Select Legends to unlock Main card colors.</string>
+    <string name="deck_allowed_colors">Allowed colors: %1$s</string>
+    <string name="deck_card_color_warning">%1$s needs a %2$s Legend.</string>
 </resources>

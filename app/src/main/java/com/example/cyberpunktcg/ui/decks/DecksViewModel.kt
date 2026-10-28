@@ -13,6 +13,7 @@ import java.util.UUID
 import com.example.cyberpunktcg.domain.DeckValidation
 import com.example.cyberpunktcg.domain.countCardCopies
 import com.example.cyberpunktcg.domain.validateDeck
+import com.example.cyberpunktcg.domain.selectedLegendColors
 
 internal class DecksViewModel(private val cards: List<Card> = DemoCards.cards) : ViewModel() {
     var decks: List<Deck> by mutableStateOf(emptyList())
@@ -77,6 +78,7 @@ internal class DecksViewModel(private val cards: List<Card> = DemoCards.cards) :
     fun canAddCard(deckId: String, cardId: String): Boolean {
         val deck = editingDeck(deckId) ?: return false
         val card = mainCards.firstOrNull { it.id == cardId } ?: return false
+        if (card.color !in selectedLegendColors(deck, cards)) return false
         return countCardCopies(deck.items, cards, card) < 3
     }
 
@@ -116,6 +118,12 @@ internal class DecksViewModel(private val cards: List<Card> = DemoCards.cards) :
         decks = decks.map { if (it.id == deckId) deck.copy(name = name) else it }
         workingCopies = workingCopies - deckId
         return true
+    }
+
+    fun deleteDeck(deckId: String) {
+        decks = decks.filterNot { it.id == deckId }
+
+        workingCopies = workingCopies - deckId
     }
 
     fun discardChanges(deckId: String) {

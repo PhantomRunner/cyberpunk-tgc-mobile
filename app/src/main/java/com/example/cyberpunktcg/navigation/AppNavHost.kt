@@ -71,6 +71,7 @@ internal fun AppNavHost(
         composable(AppDestination.Decks.route) {
             MyDecksScreen(
                 decks = decksViewModel.decks,
+                onDeleteDeck = decksViewModel::deleteDeck,
                 onCreateDeck = { name ->
                     val deck = decksViewModel.createDeck(name)
                     if (deck != null) {
