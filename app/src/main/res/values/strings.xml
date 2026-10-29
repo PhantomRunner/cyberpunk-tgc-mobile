@@ -8,6 +8,9 @@
     <string name="home_statistic_placeholder">—</string>
     <string name="home_statistics_notice">Collection statistics coming later</string>
     <string name="home_browse_collection">Browse collection</string>
+    <string name="home_your_decks">Your decks: %1$d</string>
+    <string name="home_view_all_decks">View all decks</string>
+    <string name="home_go_to_my_decks">Go to My Decks</string>
     <string name="collection">Collection</string>
     <string name="demo_collection">Demo collection</string>
     <string name="demo_collection_description">Fictional cards for the UI prototype.</string>

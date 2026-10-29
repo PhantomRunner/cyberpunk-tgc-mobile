@@ -16,18 +16,27 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.cyberpunktcg.R
+import com.example.cyberpunktcg.data.model.Card
+import com.example.cyberpunktcg.data.model.Deck
 
 @Composable
 internal fun HomeScreen(
+    deckCount: Int,
+    recentDecks: List<Deck>,
+    legendsByDeck: Map<String, List<Card>>,
     onBrowseCollection: () -> Unit,
     onOpenDecks: () -> Unit,
+    onViewAllDecks: () -> Unit,
+    onOpenDeck: (String) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -54,6 +63,29 @@ internal fun HomeScreen(
         }
         Button(onClick = onOpenDecks, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.my_decks))
+        }
+        Text(
+            text = stringResource(R.string.home_your_decks, deckCount),
+            style = MaterialTheme.typography.titleMedium,
+        )
+        if (recentDecks.isEmpty()) {
+            Text(stringResource(R.string.no_decks_yet))
+            TextButton(onClick = onViewAllDecks, modifier = Modifier.fillMaxWidth()) {
+                Text(stringResource(R.string.home_go_to_my_decks))
+            }
+        } else {
+            recentDecks.forEach { deck ->
+                key(deck.id) {
+                    HomeDeckCard(
+                        deck = deck,
+                        legends = legendsByDeck[deck.id].orEmpty(),
+                        onClick = { onOpenDeck(deck.id) },
+                    )
+                }
+            }
+            TextButton(onClick = onViewAllDecks, modifier = Modifier.fillMaxWidth()) {
+                Text(stringResource(R.string.home_view_all_decks))
+            }
         }
         Text(
             text = stringResource(R.string.demo_collection_description),

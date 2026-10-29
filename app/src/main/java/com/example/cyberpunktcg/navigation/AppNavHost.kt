@@ -44,9 +44,28 @@ internal fun AppNavHost(
         modifier = modifier,
     ) {
         composable(AppDestination.Home.route) {
+            val decks = decksViewModel.decks
+            val recentDecks = decks.takeLast(3).asReversed()
+            val legendsByDeck = recentDecks.associate { deck ->
+                deck.id to deck.legendIds.mapNotNull { id ->
+                    decksViewModel.legends.firstOrNull { it.id == id }
+                }
+            }
+            val onViewAllDecks: () -> Unit = {
+                onTabSelected(AppDestination.Decks)
+                navController.popBackStack(AppDestination.Decks.route, false)
+            }
             HomeScreen(
+                deckCount = decks.size,
+                recentDecks = recentDecks,
+                legendsByDeck = legendsByDeck,
                 onBrowseCollection = { onTabSelected(AppDestination.Collection) },
                 onOpenDecks = { onTabSelected(AppDestination.Decks) },
+                onViewAllDecks = onViewAllDecks,
+                onOpenDeck = { deckId ->
+                    onViewAllDecks()
+                    navController.navigate(deckEditorRoute(deckId)) { launchSingleTop = true }
+                },
             )
         }
         composable(AppDestination.Collection.route) {
