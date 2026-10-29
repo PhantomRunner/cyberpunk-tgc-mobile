@@ -30,6 +30,7 @@ internal fun AppNavHost(
     onDarkThemeChange: (Boolean) -> Unit,
     decksViewModel: DecksViewModel,
     onEditorBack: () -> Unit,
+    onTabSelected: (AppDestination) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val onBackToDecks: () -> Unit = {
@@ -42,7 +43,12 @@ internal fun AppNavHost(
         startDestination = AppDestination.Home.route,
         modifier = modifier,
     ) {
-        composable(AppDestination.Home.route) { HomeScreen() }
+        composable(AppDestination.Home.route) {
+            HomeScreen(
+                onBrowseCollection = { onTabSelected(AppDestination.Collection) },
+                onOpenDecks = { onTabSelected(AppDestination.Decks) },
+            )
+        }
         composable(AppDestination.Collection.route) {
             val collectionBrowser: CardBrowserViewModel = viewModel()
             CollectionScreen(

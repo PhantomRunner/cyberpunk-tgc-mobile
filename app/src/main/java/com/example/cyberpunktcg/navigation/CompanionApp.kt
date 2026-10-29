@@ -46,6 +46,12 @@ fun CompanionApp(isDarkTheme: Boolean, onDarkThemeChange: (Boolean) -> Unit) {
         }
     }
 
+    val onTabSelected: (AppDestination) -> Unit = { selectedTab ->
+        if (selectedTab != currentDestination.mainTab) {
+            navigateToMainTab(navController, selectedTab)
+        }
+    }
+
     // Navigation restores its current entry after this state, so keep the pending ID
     // without a rememberSaveable input key that would reset it during rotation.
     if (discardDeckId != null && discardDeckId == editorDeckId &&
@@ -81,11 +87,7 @@ fun CompanionApp(isDarkTheme: Boolean, onDarkThemeChange: (Boolean) -> Unit) {
         bottomBar = {
             AppBottomBar(
                 selectedTab = currentDestination.mainTab,
-                onTabSelected = { selectedTab ->
-                    if (selectedTab != currentDestination.mainTab) {
-                        navigateToMainTab(navController, selectedTab)
-                    }
-                },
+                onTabSelected = onTabSelected,
             )
         },
     ) { innerPadding ->
@@ -95,6 +97,7 @@ fun CompanionApp(isDarkTheme: Boolean, onDarkThemeChange: (Boolean) -> Unit) {
             onDarkThemeChange = onDarkThemeChange,
             decksViewModel = decksViewModel,
             onEditorBack = onBack,
+            onTabSelected = onTabSelected,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)

@@ -2,6 +2,12 @@
 <resources>
     <string name="app_name">Cyberpunk TCG Companion</string>
     <string name="home">Home</string>
+    <string name="home_total_cards">Total cards</string>
+    <string name="home_unique_cards">Unique cards</string>
+    <string name="home_complete_sets">Complete sets</string>
+    <string name="home_statistic_placeholder">—</string>
+    <string name="home_statistics_notice">Collection statistics coming later</string>
+    <string name="home_browse_collection">Browse collection</string>
     <string name="collection">Collection</string>
     <string name="demo_collection">Demo collection</string>
     <string name="demo_collection_description">Fictional cards for the UI prototype.</string>
