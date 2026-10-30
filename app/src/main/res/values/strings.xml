@@ -46,6 +46,13 @@
     <string name="card_sell_indicator">Sell 1</string>
     <string name="my_decks">My Decks</string>
     <string name="scanner">Scanner</string>
+    <string name="camera_preview">Camera preview</string>
+    <string name="camera_permission_message">Allow camera access to show the preview.</string>
+    <string name="camera_grant_access">Allow camera</string>
+    <string name="camera_open_settings">Open app settings</string>
+    <string name="camera_no_rear_camera">No rear camera is available on this device.</string>
+    <string name="camera_unavailable">Camera is unavailable. Please try again.</string>
+    <string name="camera_retry">Retry</string>
     <string name="settings">Settings</string>
     <string name="theme_title">Theme</string>
     <string name="theme_light">Light</string>
