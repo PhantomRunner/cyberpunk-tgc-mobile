@@ -1,14 +1,21 @@
 package com.example.cyberpunktcg.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.cyberpunktcg.data.sample.DemoCards
 import com.example.cyberpunktcg.ui.card.CardDetailsScreen
 import com.example.cyberpunktcg.ui.collection.CollectionScreen
@@ -21,7 +28,9 @@ import com.example.cyberpunktcg.ui.decks.DecksViewModel
 import com.example.cyberpunktcg.ui.decks.MyDecksScreen
 import com.example.cyberpunktcg.ui.home.HomeScreen
 import com.example.cyberpunktcg.ui.scanner.ScannerScreen
+import com.example.cyberpunktcg.ui.scanner.ScannerViewModel
 import com.example.cyberpunktcg.ui.settings.SettingsScreen
+import java.io.File
 
 @Composable
 internal fun AppNavHost(
@@ -198,7 +207,24 @@ internal fun AppNavHost(
                 CardDetailsScreen(card)
             }
         }
-        composable(AppDestination.Scanner.route) { ScannerScreen() }
+        composable(AppDestination.Scanner.route) { entry ->
+            val context = LocalContext.current
+            val factory = remember(context.applicationContext) {
+                val photoDirectory = File(context.cacheDir, "scanner_photos")
+                viewModelFactory { initializer { ScannerViewModel(photoDirectory) } }
+            }
+            val scanner: ScannerViewModel = viewModel(factory = factory)
+            val currentEntry by navController.currentBackStackEntryAsState()
+            DisposableEffect(navController, scanner) {
+                val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
+
+                    if (destination.route != AppDestination.Scanner.route) scanner.reset()
+                }
+                navController.addOnDestinationChangedListener(listener)
+                onDispose { navController.removeOnDestinationChangedListener(listener) }
+            }
+            ScannerScreen(viewModel = scanner, isActive = currentEntry?.id == entry.id)
+        }
         composable(AppDestination.Settings.route) {
             SettingsScreen(
                 isDarkTheme = isDarkTheme,

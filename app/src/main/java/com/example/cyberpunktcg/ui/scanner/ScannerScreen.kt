@@ -40,7 +40,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.cyberpunktcg.R
 
 @Composable
-internal fun ScannerScreen() {
+internal fun ScannerScreen(viewModel: ScannerViewModel, isActive: Boolean) {
     val context = LocalContext.current
     val activity = LocalActivity.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -52,6 +52,8 @@ internal fun ScannerScreen() {
     var initialRequestMade by rememberSaveable { mutableStateOf(false) }
     var needsSettings by rememberSaveable { mutableStateOf(false) }
     var cameraError by remember { mutableStateOf<CameraPreviewError?>(null) }
+    val state = viewModel.uiState
+    LaunchedEffect(viewModel) { viewModel.prepare() }
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission(),
     ) { granted ->
@@ -61,14 +63,14 @@ internal fun ScannerScreen() {
         cameraError = null
     }
 
-    LaunchedEffect(Unit) {
-        if (!initialRequestMade) {
+    LaunchedEffect(isActive) {
+        if (isActive && !initialRequestMade) {
             initialRequestMade = true
             if (!permissionGranted) permissionLauncher.launch(Manifest.permission.CAMERA)
         }
     }
     DisposableEffect(lifecycleOwner, context) {
-        // Permission may change while the user is in the Android app settings.
+
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
                 val granted = hasCameraPermission()
@@ -82,6 +84,8 @@ internal fun ScannerScreen() {
     }
 
     when {
+        !isActive -> Box(modifier = Modifier.fillMaxSize())
+        state.photoFile != null -> PhotoReview(photo = state.photoFile, onRetake = viewModel::reset)
         !permissionGranted -> {
             ScannerMessage(
                 messageResId = R.string.camera_permission_message,
@@ -105,7 +109,11 @@ internal fun ScannerScreen() {
             actionResId = R.string.camera_retry,
             onAction = { cameraError = null },
         )
-        else -> CameraPreview(onError = { cameraError = it }, modifier = Modifier.fillMaxSize())
+        else -> CameraPreview(
+            viewModel = viewModel,
+            onError = { cameraError = it },
+            modifier = Modifier.fillMaxSize(),
+        )
     }
 }
 
