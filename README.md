@@ -81,3 +81,44 @@ implemented yet.
 - The selection is stored locally in SharedPreferences and restored after restart.
   Dark is the default.
 - Auto mode and ambient light sensor integration are not implemented yet.
+
+## Architecture Perspective
+
+### Phase 1
+
+The current implementation uses one Android module, `app`. Its only activity,
+`MainActivity`, is the entry point. It applies the Material 3 theme and hosts
+`CompanionApp`, which contains the top and bottom bars. `AppNavHost` defines the
+Compose Navigation routes. Card and deck routes carry the selected record's ID.
+
+The app follows a simple MVVM structure. Compose screens display state from
+ViewModels and pass user actions back to them. When the state changes, Compose
+updates the parts of the screen that use it.
+
+- Collection and Add cards browse the `DemoCards` catalog using the same
+  `CardBrowserViewModel` logic. Each keeps its own search, filters and sort order.
+- `DecksViewModel` is shared by Home and the deck screens. The editor and Preview
+  show the working copy while you edit. Save draft updates the version shown on
+  Home and My decks. Each `Deck` stores Legend IDs and `DeckItem` records with
+  card IDs and copy counts. Kotlin functions in `domain` calculate RAM limits
+  and deck warnings.
+- Scanner is a tab in the same activity. CameraX handles the camera preview and
+  takes one photo at a time. `ScannerViewModel` tracks the capture and the photo
+  being reviewed.
+
+#### State and storage
+
+- **Decks** stay in memory for the current session, including saved drafts and
+  unsaved edits. They survive tab switches and screen rotation. The deck list
+  starts empty when the app process restarts.
+- **Browsing state** uses Android's saved UI state. `SavedStateHandle` keeps the
+  search, filters and sort order. Compose Navigation saves the back stack and
+  Compose saves the grid position. Android can restore these when it recreates
+  the same task after the app process ends.
+- **Scanner photos** are temporary JPEGs in the app's private cache. A captured
+  photo stays in review through rotation or a return from the background while
+  the process is alive. Retake or leaving Scanner discards the photo. After a
+  process restart, Scanner starts a new capture session and clears leftover files.
+- **Between launches**, `ThemePreferences` restores the Light/Dark choice from
+  `SharedPreferences`. The same six demo cards load from code on every launch.
+  Room storage for the collection and decks is planned for Milestone 2.
